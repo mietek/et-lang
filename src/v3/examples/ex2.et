@@ -1,0 +1,27 @@
+datatype CHAR = A|B|C|D|E|F|G|H|I|J|K|L|M;
+datatype LIST 'a = Nil | Cons from 'a (LIST 'a);
+datatype TREE 'a = Leaf from 'a | Node from 'a (TREE 'a) (TREE 'a);
+datatype CONT 'a = DC | CC from ((CONT 'a) -> LIST 'a) -> LIST 'a;
+val o = fn g f x => g (f x);
+val apply = fn k => _CONTit k (fn g => g DC)
+                              (fn h g => h (fn f => g (CC f)));
+val breadth = fn t => _TREEit t
+         (fn a now => CC (fn later => Cons a (apply now later)))
+	 (fn a brl brr now => CC (fn later => Cons a (apply now (o later (o brl brr)))));
+
+val extract = fn k => _CONTit k Nil (fn f => f (fn l => l));
+
+val run = fn t => extract (breadth t DC);
+
+val t = Node A
+          (Node B
+	       (Node D (Leaf H) (Leaf I))
+	       (Node E (Leaf J) (Leaf K))
+	  )
+	  (Node C
+	       (Leaf F)
+	       (Node G (Leaf L) (Leaf M))
+	  );
+run t;
+
+(* vim: ft=sml *)

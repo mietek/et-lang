@@ -1,0 +1,14 @@
+datatype PAIR 'a 'b = Pair from 'a 'b;
+datatype BOTTOM = ;
+datatype BOOL = True | False;
+datatype UNION 'a 'b = Inl from 'a | Inr from 'b;
+datatype UNIT = Unit;
+
+val fst = \p. _PAIRit p (\x y. x);
+val snd = \p. _PAIRit p (\x y. y);
+val when = _UNIONit;
+val case0 = _BOTTOMit;
+val case1 = _UNITit;
+
+(* vim: ft=sml 
+ *)

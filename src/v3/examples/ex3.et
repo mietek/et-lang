@@ -1,0 +1,14 @@
+datatype NAT = S from NAT | O;
+codatatype STREAM 'a = Shd to 'a & Stl to STREAM 'a;
+val smap = fn f s => _STREAMci (fn x => f (Shd x)) Stl s;
+val natstr = fn n => _STREAMci (fn x => x) S n;
+val sprefix = fn h s => _STREAMcr (fn x => h) (fn x => Inl s) s;
+val ns = natstr O;
+Shd ns;
+Shd (Stl ns);
+val ns' = sprefix (S (S O)) ns;
+Shd ns';
+Shd (Stl ns');
+
+(* vim: ft=sml 
+ *)

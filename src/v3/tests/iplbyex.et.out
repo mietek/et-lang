@@ -1,0 +1,21 @@
++ val f1 = \p q r. p r;
+val f1 : ('a -> 'b) -> 'c -> 'a -> 'b
++ f1;
+\z y. z : ('a -> 'b) -> 'c -> 'a -> 'b
++ \x y z. x z = f1;
+True : BOOL
++ val s = \f g x. f x (g x);
+val s : ('a -> 'b -> 'c) -> ('a -> 'b) -> 'a -> 'c
++ val k = \x y. x;
+val k : 'a -> 'b -> 'a
++ s k k; 
+\z. z : 'a -> 'a
++ val i = let val ss = \f g x. f x (g x);
+=             val kk = \x y. x;
+=         in ss kk kk end;
+   val ss : ('a -> 'b -> 'c) -> ('a -> 'b) -> 'a -> 'c
+   val kk : 'a -> 'b -> 'a
+val i : 'a -> 'a
++ i;
+\z. z : 'a -> 'a
+EOF.

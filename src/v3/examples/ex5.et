@@ -1,0 +1,4 @@
+codatatype Z2 'a = OutZ2 to ('a -> Z2 'a);
+codatatype Y2 'a = OutY2 to ((Z2 'a) -> Y2 'a) ;
+(* We had a bug here. *)
+codatatype X2 = OutX2 to (Y2 X2);

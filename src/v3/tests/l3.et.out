@@ -1,0 +1,171 @@
++ datatype NAT = O | S from NAT;
+datatype NAT
+con  O : NAT
+con  S : NAT -> NAT
+iter _NATit : NAT -> 'a -> ('a -> 'a) -> 'a
+rec  _NATrec : NAT -> 'a -> ((NAT * 'a) -> 'a) -> 'a
+comp _NATit (O ) = \z y. z
+comp _NATit (S z) = \y x. x (_NATit z y x)
+comp _NATrec (O ) = \z y. z
+comp _NATrec (S z) = \y x. x (z, _NATrec z y x)
+
++ 
+= val add = \x y. _NATit x y (\y. S y);
+val add : NAT -> NAT -> NAT
++ 
+= \x y. add (S x) y = \x y. S (add x y);
+True : BOOL
++ \x. add O x = \x. x;
+True : BOOL
++ 
+= val mult = \x y. _NATit x O (\z. add z y);
+val mult : NAT -> NAT -> NAT
++ 
+= \x y. mult (S x) y = \x y. add (mult x y) y;
+True : BOOL
++ \y. mult O y = \y. O;
+True : BOOL
++ 
+= val exp = \x y. _NATit y (S O) (\z. mult z x);
+val exp : NAT -> NAT -> NAT
++ 
+= \x y. exp x (S y) = \x y. mult (exp x y) x;
+True : BOOL
++ \x. exp x O = \x. (S O);
+True : BOOL
++ 
+= val pred = \x. _NATrec x O fst;
+val pred : NAT -> NAT
++ 
+= \x. pred (S x) = \x. x;
+True : BOOL
++ pred O = O;
+True : BOOL
++ 
+= val subtr = \m n. _NATit n m (\x. pred x);
+val subtr : NAT -> NAT -> NAT
++ 
+= \x y. subtr x (S y) = \x y. pred (subtr x y);
+True : BOOL
++ \x. subtr x O = \x. x;
+True : BOOL
++ 
+= val is_zero = \x. _NATit x True (\x. False);
+val is_zero : NAT -> BOOL
++ is_zero O = True;
+True : BOOL
++ \x. is_zero (S x) = \x. False;
+True : BOOL
++ 
+= val eq = \m n. 
+=   if is_zero (subtr m n) then
+=     is_zero (subtr n m)
+=   else False;
+val eq : NAT -> NAT -> BOOL
++ 
+= val eq = \m n. fst (_NATit m (True, n) 
+=   (\x. if is_zero (snd x) then (False, O) else (fst x, pred (snd x))));
+val eq : NAT -> NAT -> BOOL
++ 
+= val is_one = \x. is_zero (pred x);
+val is_one : NAT -> BOOL
++ val eq = \m n. is_one (subtr (S m) n); 
+val eq : NAT -> NAT -> BOOL
++ 
+= eq O O = True;
+True : BOOL
++ \x. eq (S x) O = \x. False;
+True : BOOL
++ \x. eq O (S x) = \x. False;
+False : BOOL
++ \x y. eq (S x) y = \x y. eq x (pred y);
+False : BOOL
++ \x y. eq x (S y) = \x y. eq (pred x) y;
+False : BOOL
++ 
+= val le = \m n. is_zero (subtr m n);
+val le : NAT -> NAT -> BOOL
++ 
+= le O O = True;
+True : BOOL
++ \x. le (S x) O = \x. False;
+True : BOOL
++ \x. le O (S x) = \x. True;
+False : BOOL
++ \x y. le (S x) y = \x y. le x (pred y);
+False : BOOL
++ 
+= val ack = \m n. (_NATit m (\n. (S n)) (\f. \n. _NATit n (f (S O)) f)) n;
+val ack : NAT -> NAT -> NAT
++ 
+= val ack' = \z. _NATit z S (\y x. _NATit x (y (S O)) y);
+val ack' : NAT -> NAT -> NAT
++ 
+= \n. ack O n = \n. S n;
+True : BOOL
++ \m. ack (S m) O = \m. ack m (S O);
+True : BOOL
++ \m n. ack (S m) (S n) = \m n. ack m (ack (S m) n);
+True : BOOL
++ 
+= datatype LIST 'a = Nil | Cons from 'a (LIST 'a);
+datatype LIST
+con  Nil : LIST 'a
+con  Cons : 'a -> (LIST 'a) -> (LIST 'a)
+iter _LISTit : (LIST 'a) -> 'b -> ('a -> 'b -> 'b) -> 'b
+rec  _LISTrec : (LIST 'a) -> 'b -> ('a -> ((LIST 'a) * 'b) -> 'b) -> 'b
+comp _LISTit (Nil ) = \z y. z
+comp _LISTit (Cons z y) = \x w. w z (_LISTit y x w)
+comp _LISTrec (Nil ) = \z y. z
+comp _LISTrec (Cons z y) = \x w. w z (y, _LISTrec y x w)
+
++ 
+= val length = \l. _LISTit l O (\x y. S y);
+val length : (LIST 'a) -> NAT
++ 
+= length Nil = O;
+True : BOOL
++ \x y. length (Cons x y) = \x y. S (length y);
+True : BOOL
++ 
+= val append = \x y. _LISTit x y Cons;
+val append : (LIST 'a) -> (LIST 'a) -> (LIST 'a)
++ 
+= \x. append Nil x = \x. x;
+True : BOOL
++ \x y z. append (Cons x y) z = \x y z. Cons x (append y z);
+True : BOOL
++ 
+= val map = \f l. _LISTit l Nil (\x y. Cons (f x) y);
+val map : ('a -> 'b) -> (LIST 'a) -> (LIST 'b)
++ 
+= \f. map f Nil = \f. Nil;
+True : BOOL
++ \f x y. map f (Cons x y) = \f x y. Cons (f x) (map f y);
+True : BOOL
++ 
+= datatype TREE 'a = Tip | Node from 'a (TREE 'a) (TREE 'a);
+datatype TREE
+con  Tip : TREE 'a
+con  Node : 'a -> (TREE 'a) -> (TREE 'a) -> (TREE 'a)
+iter _TREEit : (TREE 'a) -> 'b -> ('a -> 'b -> 'b -> 'b) -> 'b
+rec  _TREErec : (TREE 'a) -> 'b -> ('a -> ((TREE 'a) * 'b) -> ((TREE 'a) * 'b) -> 'b) -> 'b
+comp _TREEit (Tip ) = \z y. z
+comp _TREEit (Node z y x) = \w v. v z (_TREEit y w v) (_TREEit x w v)
+comp _TREErec (Tip ) = \z y. z
+comp _TREErec (Node z y x) = \w v. v z (y, _TREErec y w v) (x, _TREErec x w v)
+
++ 
+= val max = \x y. if le x y then y else x;
+val max : NAT -> NAT -> NAT
++ val height = \t. _TREEit t O (\a x y. S (max x y));
+val height : (TREE 'a) -> NAT
++ 
+= height Tip = O;
+True : BOOL
++ \x y z. height (Node x y z) = \x y z. S (max (height y) (height z));
+True : BOOL
++ 
+= (* vim: ft=sml
+=  *)
+EOF.

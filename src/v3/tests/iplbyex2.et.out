@@ -1,0 +1,33 @@
++ datatype PROD1 'a 'b = Pair' from 'a 'b;
+datatype PROD1
+con  Pair' : 'a -> 'b -> (PROD1 'a 'b)
+iter _PROD1it : (PROD1 'a 'b) -> ('a -> 'b -> 'c) -> 'c
+rec  _PROD1rec = _PROD1it
+comp _PROD1it (Pair' z y) = \x. x z y
+
++ codatatype PROD2 'a 'b = Fst to 'a & Snd to 'b;
+codatatype PROD2
+des    Fst : (PROD2 'a 'b) -> 'a
+des    Snd : (PROD2 'a 'b) -> 'b
+coiter _PROD2ci : ('c -> 'a) -> ('c -> 'b) -> 'c -> (PROD2 'a 'b)
+corec  _PROD2cr = _PROD2ci
+comp   Fst (_PROD2ci z y x) = z x
+comp   Snd (_PROD2ci z y x) = y x
+
++ val pair = \x y. _PROD2ci (\z. x) (\z. y) True;
+val pair : 'a -> 'b -> (PROD2 'a 'b)
++ val split = \p z. z (Fst p) (Snd p);
+val split : (PROD2 'a 'b) -> ('a -> 'b -> 'c) -> 'c
++ \x y. _PROD1it (Pair' x y) = \x y. split (pair x y);
+True : BOOL
++ val prod = \f1 f2 x. Pair' (f1 x) (f2 x);
+val prod : ('a -> 'b) -> ('a -> 'c) -> 'a -> (PROD1 'b 'c)
++ val fst' = \p. _PROD1it p \x y. x;
+val fst' : (PROD1 'a 'b) -> 'a
++ val snd' = \p. _PROD1it p \x y. y;
+val snd' : (PROD1 'a 'b) -> 'b
++ \f g x. Fst (_PROD2ci f g x) = \f g x. fst' (prod f g x);
+True : BOOL
++ \f g x. Snd (_PROD2ci f g x) = \f g x. snd' (prod f g x);
+True : BOOL
+EOF.

@@ -1,0 +1,26 @@
++ codatatype Z2 'a = OutZ2 to ('a -> Z2 'a);
+codatatype Z2
+des    OutZ2 : (Z2 'a) -> 'a -> (Z2 'a)
+coiter _Z2ci : ('b -> 'a -> 'b) -> 'b -> (Z2 'a)
+corec  _Z2cr : ('b -> 'a -> ((Z2 'a) + 'b)) -> 'b -> (Z2 'a)
+comp   OutZ2 (_Z2ci z y) = \x. _Z2ci z (z y x)
+comp   OutZ2 (_Z2cr z y) = \x. when (z y x) (\w. w) (_Z2cr z)
+
++ codatatype Y2 'a = OutY2 to ((Z2 'a) -> Y2 'a) ;
+codatatype Y2
+des    OutY2 : (Y2 'a) -> (Z2 'a) -> (Y2 'a)
+coiter _Y2ci : ('b -> (Z2 'a) -> 'b) -> 'b -> (Y2 'a)
+corec  _Y2cr : ('b -> (Z2 'a) -> ((Y2 'a) + 'b)) -> 'b -> (Y2 'a)
+comp   OutY2 (_Y2ci z y) = \x. _Y2ci z (z y x)
+comp   OutY2 (_Y2cr z y) = \x. when (z y x) (\w. w) (_Y2cr z)
+
++ (* We had a bug here. *)
+= codatatype X2 = OutX2 to (Y2 X2);
+codatatype X2
+des    OutX2 : X2 -> (Y2 X2)
+coiter _X2ci : ('a -> (Y2 'a)) -> 'a -> X2
+corec  _X2cr : ('a -> (Y2 (X2 + 'a))) -> 'a -> X2
+comp   OutX2 (_X2ci z y) = _Y2ci (\x w. OutY2 x (_Z2ci (\v u. OutZ2 v (_X2ci z u)) w)) (z y)
+comp   OutX2 (_X2cr z y) = _Y2cr (\x w. Inr (OutY2 x (_Z2cr (\v u. Inr (OutZ2 v (when u (\t. t) (_X2cr z)))) w))) (z y)
+
+EOF.

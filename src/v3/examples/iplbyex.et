@@ -1,0 +1,10 @@
+val f1 = \p q r. p r;
+f1;
+\x y z. x z = f1;
+val s = \f g x. f x (g x);
+val k = \x y. x;
+s k k; 
+val i = let val ss = \f g x. f x (g x);
+            val kk = \x y. x;
+        in ss kk kk end;
+i;

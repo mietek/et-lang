@@ -1,0 +1,19 @@
+#!/bin/sh
+
+res=0
+for f in ../examples/*.et ; do
+  n=$(basename $f)
+  test -f $n.out || continue
+  echo -n "$n... " 1>&2
+  (cd ..; ./et examples/$f) > $n.out.now
+  if cmp -s $n.out $n.out.now ; then
+    echo "OK" 1>&2
+    rm -f $n.out.now
+  else
+    echo "FAILED" 1>&2
+    diff -u $n.out $n.out.now
+    res=1
+  fi
+done
+
+exit $res

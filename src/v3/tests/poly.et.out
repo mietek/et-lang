@@ -1,0 +1,10 @@
++ \x. let val x = fst x; in True end;
+   val x : [23@0]
+\z. True : ('a * 'b) -> BOOL
++ \x. let val f = \y. y; in (f True, f x) end;
+   val f : 'a -> 'a
+Pair True : 'a -> (BOOL * 'a)
++ \x. let val f = \y. (fst x, y); in (f True, f ()) end;
+   val f : 'a -> ([38@0] * 'a)
+\z. fst z, True, fst z, Unit : ('a * 'b) -> (('a * BOOL) * 'a * UNIT)
+EOF.

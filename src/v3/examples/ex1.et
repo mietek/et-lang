@@ -1,0 +1,34 @@
+datatype NAT = S from NAT | O;
+
+val le = fn u => _NATit u (fn y v => _NATrec v (fn x => y (fst x)) False)
+		          (fn v => True);
+
+(fn v => le O v) = (fn v => True);
+(fn u v => le (S u) O) = (fn u v => False);
+(fn u v => le (S u) (S v)) = (fn u v => le u v);
+
+datatype LIST 'a = Cons from 'a (LIST 'a) | Nil;
+val tl = fn xs => _LISTrec xs (fn h p => fst p) Nil;
+datatype HDexception = Hd;
+val hd = fn xs => _LISTit xs (fn h t => Inl h) (Inr Hd);
+val append = fn xs ys => _LISTit xs Cons ys;
+
+datatype BT 'a = Node from 'a (BT 'a) (BT 'a) | Tip;
+val toBST = fn x t => _BTrec t (fn a lp rp => 
+   if le x a then Node a (snd lp) (fst rp)
+             else Node a (fst lp) (snd rp)) (Node x Tip Tip);
+
+val listToBST = fn xs => _LISTit xs toBST Tip;
+
+val inorder = fn t => _BTit t (fn a l r => append l (Cons a r)) Nil;
+
+val quicksort = fn xs => inorder (listToBST xs);
+
+val one = S O;
+val two = S one;
+val three = S two;
+val l = Cons two (Cons one (Cons three (Cons O Nil)));
+quicksort l;
+
+(* vim: ft=sml 
+ *)

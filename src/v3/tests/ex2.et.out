@@ -1,0 +1,95 @@
++ datatype CHAR = A|B|C|D|E|F|G|H|I|J|K|L|M;
+datatype CHAR
+con  A : CHAR
+con  B : CHAR
+con  C : CHAR
+con  D : CHAR
+con  E : CHAR
+con  F : CHAR
+con  G : CHAR
+con  H : CHAR
+con  I : CHAR
+con  J : CHAR
+con  K : CHAR
+con  L : CHAR
+con  M : CHAR
+iter _CHARit : CHAR -> 'a -> 'a -> 'a -> 'a -> 'a -> 'a -> 'a -> 'a -> 'a -> 'a -> 'a -> 'a -> 'a -> 'a
+rec  _CHARrec = _CHARit
+comp _CHARit (A ) = \z y x w v u t s r q p o n. z
+comp _CHARit (B ) = \z y x w v u t s r q p o n. y
+comp _CHARit (C ) = \z y x w v u t s r q p o n. x
+comp _CHARit (D ) = \z y x w v u t s r q p o n. w
+comp _CHARit (E ) = \z y x w v u t s r q p o n. v
+comp _CHARit (F ) = \z y x w v u t s r q p o n. u
+comp _CHARit (G ) = \z y x w v u t s r q p o n. t
+comp _CHARit (H ) = \z y x w v u t s r q p o n. s
+comp _CHARit (I ) = \z y x w v u t s r q p o n. r
+comp _CHARit (J ) = \z y x w v u t s r q p o n. q
+comp _CHARit (K ) = \z y x w v u t s r q p o n. p
+comp _CHARit (L ) = \z y x w v u t s r q p o n. o
+comp _CHARit (M ) = \z y x w v u t s r q p o n. n
+
++ datatype LIST 'a = Nil | Cons from 'a (LIST 'a);
+datatype LIST
+con  Nil : LIST 'a
+con  Cons : 'a -> (LIST 'a) -> (LIST 'a)
+iter _LISTit : (LIST 'a) -> 'b -> ('a -> 'b -> 'b) -> 'b
+rec  _LISTrec : (LIST 'a) -> 'b -> ('a -> ((LIST 'a) * 'b) -> 'b) -> 'b
+comp _LISTit (Nil ) = \z y. z
+comp _LISTit (Cons z y) = \x w. w z (_LISTit y x w)
+comp _LISTrec (Nil ) = \z y. z
+comp _LISTrec (Cons z y) = \x w. w z (y, _LISTrec y x w)
+
++ datatype TREE 'a = Leaf from 'a | Node from 'a (TREE 'a) (TREE 'a);
+datatype TREE
+con  Leaf : 'a -> (TREE 'a)
+con  Node : 'a -> (TREE 'a) -> (TREE 'a) -> (TREE 'a)
+iter _TREEit : (TREE 'a) -> ('a -> 'b) -> ('a -> 'b -> 'b -> 'b) -> 'b
+rec  _TREErec : (TREE 'a) -> ('a -> 'b) -> ('a -> ((TREE 'a) * 'b) -> ((TREE 'a) * 'b) -> 'b) -> 'b
+comp _TREEit (Leaf z) = \y x. y z
+comp _TREEit (Node z y x) = \w v. v z (_TREEit y w v) (_TREEit x w v)
+comp _TREErec (Leaf z) = \y x. y z
+comp _TREErec (Node z y x) = \w v. v z (y, _TREErec y w v) (x, _TREErec x w v)
+
++ datatype CONT 'a = DC | CC from ((CONT 'a) -> LIST 'a) -> LIST 'a;
+datatype CONT
+con  DC : CONT 'a
+con  CC : (((CONT 'a) -> (LIST 'a)) -> (LIST 'a)) -> (CONT 'a)
+iter _CONTit : (CONT 'a) -> 'b -> ((('b -> (LIST 'a)) -> (LIST 'a)) -> 'b) -> 'b
+rec  _CONTrec : (CONT 'a) -> 'b -> (((((CONT 'a) * 'b) -> (LIST 'a)) -> (LIST 'a)) -> 'b) -> 'b
+comp _CONTit (DC ) = \z y. z
+comp _CONTit (CC z) = \y x. x (\w. z (\v. w (_CONTit v y x)))
+comp _CONTrec (DC ) = \z y. z
+comp _CONTrec (CC z) = \y x. x (\w. z (\v. w (v, _CONTrec v y x)))
+
++ val o = fn g f x => g (f x);
+val o : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b
++ val apply = fn k => _CONTit k (fn g => g DC)
+=                               (fn h g => h (fn f => g (CC f)));
+val apply : (CONT 'a) -> ((CONT 'a) -> (LIST 'a)) -> (LIST 'a)
++ val breadth = fn t => _TREEit t
+=          (fn a now => CC (fn later => Cons a (apply now later)))
+= 	 (fn a brl brr now => CC (fn later => Cons a (apply now (o later (o brl brr)))));
+val breadth : (TREE 'a) -> (CONT 'a) -> (CONT 'a)
++ 
+= val extract = fn k => _CONTit k Nil (fn f => f (fn l => l));
+val extract : (CONT 'a) -> (LIST 'a)
++ 
+= val run = fn t => extract (breadth t DC);
+val run : (TREE 'a) -> (LIST 'a)
++ 
+= val t = Node A
+=           (Node B
+= 	       (Node D (Leaf H) (Leaf I))
+= 	       (Node E (Leaf J) (Leaf K))
+= 	  )
+= 	  (Node C
+= 	       (Leaf F)
+= 	       (Node G (Leaf L) (Leaf M))
+= 	  );
+val t : TREE CHAR
++ run t;
+Cons A (Cons B (Cons C (Cons D (Cons E (Cons F (Cons G (Cons H (Cons I (Cons J (Cons K (Cons L (Cons M Nil)))))))))))) : LIST CHAR
++ 
+= (* vim: ft=sml *)
+EOF.

@@ -1,0 +1,3 @@
+\x. let val x = fst x; in True end;
+\x. let val f = \y. y; in (f True, f x) end;
+\x. let val f = \y. (fst x, y); in (f True, f ()) end;

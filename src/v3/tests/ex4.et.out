@@ -1,0 +1,25 @@
++ datatype Z 'a = InZ from 'a -> Z 'a;
+datatype Z
+con  InZ : ('a -> (Z 'a)) -> (Z 'a)
+iter _Zit : (Z 'a) -> (('a -> 'b) -> 'b) -> 'b
+rec  _Zrec : (Z 'a) -> (('a -> ((Z 'a) * 'b)) -> 'b) -> 'b
+comp _Zit (InZ z) = \y. y (\x. _Zit (z x) y)
+comp _Zrec (InZ z) = \y. y (\x. z x, _Zrec (z x) y)
+
++ datatype Y 'a = InY from (Z 'a) -> Y 'a;
+datatype Y
+con  InY : ((Z 'a) -> (Y 'a)) -> (Y 'a)
+iter _Yit : (Y 'a) -> (((Z 'a) -> 'b) -> 'b) -> 'b
+rec  _Yrec : (Y 'a) -> (((Z 'a) -> ((Y 'a) * 'b)) -> 'b) -> 'b
+comp _Yit (InY z) = \y. y (\x. _Yit (z x) y)
+comp _Yrec (InY z) = \y. y (\x. z x, _Yrec (z x) y)
+
++ datatype X = InX from (Y X);
+datatype X
+con  InX : (Y X) -> X
+iter _Xit : X -> ((Y 'a) -> 'a) -> 'a
+rec  _Xrec : X -> ((Y (X * 'a)) -> 'a) -> 'a
+comp _Xit (InX z) = \y. y (_Yit z (\x. InY (\w. x (_Zit w (\v. InZ (\u. v (_Xit u y)))))))
+comp _Xrec (InX z) = \y. y (_Yrec z (\x. InY (\w. snd (x (_Zit w (\v. InZ (\u. snd (v (u, _Xrec u y)))))))))
+
+EOF.

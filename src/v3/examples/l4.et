@@ -1,0 +1,95 @@
+datatype NAT = O | S from NAT;
+
+val add = \x y. _NATit x y (\y. S y);
+
+\x y. add (S x) y = \x y. S (add x y);
+\x. add O x = \x. x;
+
+val mult = \x y. _NATit x O (\z. add z y);
+
+\x y. mult (S x) y = \x y. add (mult x y) y;
+\y. mult O y = \y. O;
+
+val pred = \x. _NATrec x O fst;
+
+\x. pred (S x) = \x. x;
+pred O = O;
+
+val subtr = \m n. _NATit n m (\x. pred x);
+
+\x y. subtr x (S y) = \x y. pred (subtr x y);
+\x. subtr x O = \x. x;
+
+val is_zero = \x. _NATit x True (\x. False);
+val is_one = \x. if is_zero x then False else is_zero (pred x);
+
+is_zero O = True;
+\x. is_zero (S x) = \x. False;
+
+val le = \m n. is_zero (subtr m n);
+val eq = \x. _NATit x is_zero (\f.
+  \y.
+    if is_zero y then False
+		 else f (pred y));
+
+\x y. eq (S x) (S y) = \x y. eq x y;
+eq O O = True;
+\x. eq (S x) O = \x. False;
+\x. eq O (S x) = \x. False;
+
+(*
+eq (S x) = 
+  \y. if is_zero y then False
+                   else eq x (pred y)
+
+eq O = is_zero
+(S y) = \x y. eq x y;
+eq (S x) O = \x. False;
+eq O O = True;
+\x. eq O (S x) = \x. False;
+*)
+
+val n2 = (S (S O));
+val n3 = (S (S (S O)));
+val n4 = (S (S (S (S O))));
+val n5 = (S (S (S (S (S O)))));
+
+val divmod = \m n. _NATit m (O, O) (\p.
+    if is_one (subtr n (snd p)) then
+      (S (fst p), O)
+    else
+      (fst p, S (snd p)));
+
+(*divmod n5 n2;*)
+
+\m. divmod O m = \m. (O, O); 
+\m n. divmod (S m) n = \m n. 
+  (\p.
+    if is_one (subtr n (snd p)) then
+      (S (fst p), O)
+    else
+      (fst p, S (snd p))) (divmod m n);
+
+val div = \x y. fst (divmod x y);
+val mod = \x y. fst (divmod x y);
+
+divmod n2 O;
+divmod n2 O = (O, n2);
+divmod n3 O = (O, n3);
+
+\m. div m O = O;
+\m. mod m O = O;
+
+codatatype STREAM 'a = Shd to 'a & Stl to STREAM 'a;
+val smap = \f s. _STREAMci (\s. f (Shd s)) Stl s;
+val natstr = \n. _STREAMci (\x. x) S n;
+val sprefix = \x s. _STREAMci (\a. when a fst Shd) (\a. Inr (when a snd Stl)) (Inl (x, s));
+
+val fib = \n. snd (_NATit n (S O, O) (\p. (add (fst p) (snd p), fst p)));
+
+fib O = O;
+fib (S O) = S O;
+\n. fib (S (S n)) = \n. add (fib (S n)) (fib n);
+  
+(* vim: ft=sml
+ *)

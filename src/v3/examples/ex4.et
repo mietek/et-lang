@@ -1,0 +1,3 @@
+datatype Z 'a = InZ from 'a -> Z 'a;
+datatype Y 'a = InY from (Z 'a) -> Y 'a;
+datatype X = InX from (Y X);

@@ -1,0 +1,159 @@
++ datatype NAT = O | S from NAT;
+datatype NAT
+con  O : NAT
+con  S : NAT -> NAT
+iter _NATit : NAT -> 'a -> ('a -> 'a) -> 'a
+rec  _NATrec : NAT -> 'a -> ((NAT * 'a) -> 'a) -> 'a
+comp _NATit (O ) = \z y. z
+comp _NATit (S z) = \y x. x (_NATit z y x)
+comp _NATrec (O ) = \z y. z
+comp _NATrec (S z) = \y x. x (z, _NATrec z y x)
+
++ 
+= val add = \x y. _NATit x y (\y. S y);
+val add : NAT -> NAT -> NAT
++ 
+= \x y. add (S x) y = \x y. S (add x y);
+True : BOOL
++ \x. add O x = \x. x;
+True : BOOL
++ 
+= val mult = \x y. _NATit x O (\z. add z y);
+val mult : NAT -> NAT -> NAT
++ 
+= \x y. mult (S x) y = \x y. add (mult x y) y;
+True : BOOL
++ \y. mult O y = \y. O;
+True : BOOL
++ 
+= val pred = \x. _NATrec x O fst;
+val pred : NAT -> NAT
++ 
+= \x. pred (S x) = \x. x;
+True : BOOL
++ pred O = O;
+True : BOOL
++ 
+= val subtr = \m n. _NATit n m (\x. pred x);
+val subtr : NAT -> NAT -> NAT
++ 
+= \x y. subtr x (S y) = \x y. pred (subtr x y);
+True : BOOL
++ \x. subtr x O = \x. x;
+True : BOOL
++ 
+= val is_zero = \x. _NATit x True (\x. False);
+val is_zero : NAT -> BOOL
++ val is_one = \x. if is_zero x then False else is_zero (pred x);
+val is_one : NAT -> BOOL
++ 
+= is_zero O = True;
+True : BOOL
++ \x. is_zero (S x) = \x. False;
+True : BOOL
++ 
+= val le = \m n. is_zero (subtr m n);
+val le : NAT -> NAT -> BOOL
++ val eq = \x. _NATit x is_zero (\f.
+=   \y.
+=     if is_zero y then False
+= 		 else f (pred y));
+val eq : NAT -> NAT -> BOOL
++ 
+= \x y. eq (S x) (S y) = \x y. eq x y;
+True : BOOL
++ eq O O = True;
+True : BOOL
++ \x. eq (S x) O = \x. False;
+True : BOOL
++ \x. eq O (S x) = \x. False;
+True : BOOL
++ 
+= (*
+= eq (S x) = 
+=   \y. if is_zero y then False
+=                    else eq x (pred y)
+= 
+= eq O = is_zero
+= (S y) = \x y. eq x y;
+= eq (S x) O = \x. False;
+= eq O O = True;
+= \x. eq O (S x) = \x. False;
+= *)
+= 
+= val n2 = (S (S O));
+val n2 : NAT
++ val n3 = (S (S (S O)));
+val n3 : NAT
++ val n4 = (S (S (S (S O))));
+val n4 : NAT
++ val n5 = (S (S (S (S (S O)))));
+val n5 : NAT
++ 
+= val divmod = \m n. _NATit m (O, O) (\p.
+=     if is_one (subtr n (snd p)) then
+=       (S (fst p), O)
+=     else
+=       (fst p, S (snd p)));
+val divmod : NAT -> NAT -> (NAT * NAT)
++ 
+= (*divmod n5 n2;*)
+= 
+= \m. divmod O m = \m. (O, O); 
+True : BOOL
++ \m n. divmod (S m) n = \m n. 
+=   (\p.
+=     if is_one (subtr n (snd p)) then
+=       (S (fst p), O)
+=     else
+=       (fst p, S (snd p))) (divmod m n);
+True : BOOL
++ 
+= val div = \x y. fst (divmod x y);
+val div : NAT -> NAT -> NAT
++ val mod = \x y. fst (divmod x y);
+val mod : NAT -> NAT -> NAT
++ 
+= divmod n2 O;
+O, S (S O) : NAT * NAT
++ divmod n2 O = (O, n2);
+True : BOOL
++ divmod n3 O = (O, n3);
+True : BOOL
++ 
+= \m. div m O = O;
+False : BOOL
++ \m. mod m O = O;
+False : BOOL
++ 
+= codatatype STREAM 'a = Shd to 'a & Stl to STREAM 'a;
+codatatype STREAM
+des    Shd : (STREAM 'a) -> 'a
+des    Stl : (STREAM 'a) -> (STREAM 'a)
+coiter _STREAMci : ('b -> 'a) -> ('b -> 'b) -> 'b -> (STREAM 'a)
+corec  _STREAMcr : ('b -> 'a) -> ('b -> ((STREAM 'a) + 'b)) -> 'b -> (STREAM 'a)
+comp   Shd (_STREAMci z y x) = z x
+comp   Stl (_STREAMci z y x) = _STREAMci z y (y x)
+comp   Shd (_STREAMcr z y x) = z x
+comp   Stl (_STREAMcr z y x) = when (y x) (\w. w) (_STREAMcr z y)
+
++ val smap = \f s. _STREAMci (\s. f (Shd s)) Stl s;
+val smap : ('a -> 'b) -> (STREAM 'a) -> (STREAM 'b)
++ val natstr = \n. _STREAMci (\x. x) S n;
+val natstr : NAT -> (STREAM NAT)
++ val sprefix = \x s. _STREAMci (\a. when a fst Shd) (\a. Inr (when a snd Stl)) (Inl (x, s));
+val sprefix : 'a -> (STREAM 'a) -> (STREAM 'a)
++ 
+= val fib = \n. snd (_NATit n (S O, O) (\p. (add (fst p) (snd p), fst p)));
+val fib : NAT -> NAT
++ 
+= fib O = O;
+True : BOOL
++ fib (S O) = S O;
+True : BOOL
++ \n. fib (S (S n)) = \n. add (fib (S n)) (fib n);
+True : BOOL
++   
+= (* vim: ft=sml
+=  *)
+EOF.

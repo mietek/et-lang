@@ -1,0 +1,87 @@
++ datatype NAT = S from NAT | O;
+datatype NAT
+con  S : NAT -> NAT
+con  O : NAT
+iter _NATit : NAT -> ('a -> 'a) -> 'a -> 'a
+rec  _NATrec : NAT -> ((NAT * 'a) -> 'a) -> 'a -> 'a
+comp _NATit (S z) = \y x. y (_NATit z y x)
+comp _NATit (O ) = \z y. y
+comp _NATrec (S z) = \y x. y (z, _NATrec z y x)
+comp _NATrec (O ) = \z y. y
+
++ 
+= val le = fn u => _NATit u (fn y v => _NATrec v (fn x => y (fst x)) False)
+= 		          (fn v => True);
+val le : NAT -> NAT -> BOOL
++ 
+= (fn v => le O v) = (fn v => True);
+True : BOOL
++ (fn u v => le (S u) O) = (fn u v => False);
+True : BOOL
++ (fn u v => le (S u) (S v)) = (fn u v => le u v);
+True : BOOL
++ 
+= datatype LIST 'a = Cons from 'a (LIST 'a) | Nil;
+datatype LIST
+con  Cons : 'a -> (LIST 'a) -> (LIST 'a)
+con  Nil : LIST 'a
+iter _LISTit : (LIST 'a) -> ('a -> 'b -> 'b) -> 'b -> 'b
+rec  _LISTrec : (LIST 'a) -> ('a -> ((LIST 'a) * 'b) -> 'b) -> 'b -> 'b
+comp _LISTit (Cons z y) = \x w. x z (_LISTit y x w)
+comp _LISTit (Nil ) = \z y. y
+comp _LISTrec (Cons z y) = \x w. x z (y, _LISTrec y x w)
+comp _LISTrec (Nil ) = \z y. y
+
++ val tl = fn xs => _LISTrec xs (fn h p => fst p) Nil;
+val tl : (LIST 'a) -> (LIST 'a)
++ datatype HDexception = Hd;
+datatype HDexception
+con  Hd : HDexception
+iter _HDexceptionit : HDexception -> 'a -> 'a
+rec  _HDexceptionrec = _HDexceptionit
+comp _HDexceptionit (Hd ) = \z. z
+
++ val hd = fn xs => _LISTit xs (fn h t => Inl h) (Inr Hd);
+val hd : (LIST 'a) -> ('a + HDexception)
++ val append = fn xs ys => _LISTit xs Cons ys;
+val append : (LIST 'a) -> (LIST 'a) -> (LIST 'a)
++ 
+= datatype BT 'a = Node from 'a (BT 'a) (BT 'a) | Tip;
+datatype BT
+con  Node : 'a -> (BT 'a) -> (BT 'a) -> (BT 'a)
+con  Tip : BT 'a
+iter _BTit : (BT 'a) -> ('a -> 'b -> 'b -> 'b) -> 'b -> 'b
+rec  _BTrec : (BT 'a) -> ('a -> ((BT 'a) * 'b) -> ((BT 'a) * 'b) -> 'b) -> 'b -> 'b
+comp _BTit (Node z y x) = \w v. w z (_BTit y w v) (_BTit x w v)
+comp _BTit (Tip ) = \z y. y
+comp _BTrec (Node z y x) = \w v. w z (y, _BTrec y w v) (x, _BTrec x w v)
+comp _BTrec (Tip ) = \z y. y
+
++ val toBST = fn x t => _BTrec t (fn a lp rp => 
+=    if le x a then Node a (snd lp) (fst rp)
+=              else Node a (fst lp) (snd rp)) (Node x Tip Tip);
+val toBST : NAT -> (BT NAT) -> (BT NAT)
++ 
+= val listToBST = fn xs => _LISTit xs toBST Tip;
+val listToBST : (LIST NAT) -> (BT NAT)
++ 
+= val inorder = fn t => _BTit t (fn a l r => append l (Cons a r)) Nil;
+val inorder : (BT 'a) -> (LIST 'a)
++ 
+= val quicksort = fn xs => inorder (listToBST xs);
+val quicksort : (LIST NAT) -> (LIST NAT)
++ 
+= val one = S O;
+val one : NAT
++ val two = S one;
+val two : NAT
++ val three = S two;
+val three : NAT
++ val l = Cons two (Cons one (Cons three (Cons O Nil)));
+val l : LIST NAT
++ quicksort l;
+Cons O (Cons (S O) (Cons (S (S O)) (Cons (S (S (S O))) Nil))) : LIST NAT
++ 
+= (* vim: ft=sml 
+=  *)
+EOF.

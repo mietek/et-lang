@@ -1,0 +1,90 @@
+datatype NAT = O | S from NAT;
+
+val add = \x y. _NATit x y (\y. S y);
+
+\x y. add (S x) y = \x y. S (add x y);
+\x. add O x = \x. x;
+
+val mult = \x y. _NATit x O (\z. add z y);
+
+\x y. mult (S x) y = \x y. add (mult x y) y;
+\y. mult O y = \y. O;
+
+val exp = \x y. _NATit y (S O) (\z. mult z x);
+
+\x y. exp x (S y) = \x y. mult (exp x y) x;
+\x. exp x O = \x. (S O);
+
+val pred = \x. _NATrec x O fst;
+
+\x. pred (S x) = \x. x;
+pred O = O;
+
+val subtr = \m n. _NATit n m (\x. pred x);
+
+\x y. subtr x (S y) = \x y. pred (subtr x y);
+\x. subtr x O = \x. x;
+
+val is_zero = \x. _NATit x True (\x. False);
+is_zero O = True;
+\x. is_zero (S x) = \x. False;
+
+val eq = \m n. 
+  if is_zero (subtr m n) then
+    is_zero (subtr n m)
+  else False;
+
+val eq = \m n. fst (_NATit m (True, n) 
+  (\x. if is_zero (snd x) then (False, O) else (fst x, pred (snd x))));
+
+val is_one = \x. is_zero (pred x);
+val eq = \m n. is_one (subtr (S m) n); 
+
+eq O O = True;
+\x. eq (S x) O = \x. False;
+\x. eq O (S x) = \x. False;
+\x y. eq (S x) y = \x y. eq x (pred y);
+\x y. eq x (S y) = \x y. eq (pred x) y;
+
+val le = \m n. is_zero (subtr m n);
+
+le O O = True;
+\x. le (S x) O = \x. False;
+\x. le O (S x) = \x. True;
+\x y. le (S x) y = \x y. le x (pred y);
+
+val ack = \m n. (_NATit m (\n. (S n)) (\f. \n. _NATit n (f (S O)) f)) n;
+
+val ack' = \z. _NATit z S (\y x. _NATit x (y (S O)) y);
+
+\n. ack O n = \n. S n;
+\m. ack (S m) O = \m. ack m (S O);
+\m n. ack (S m) (S n) = \m n. ack m (ack (S m) n);
+
+datatype LIST 'a = Nil | Cons from 'a (LIST 'a);
+
+val length = \l. _LISTit l O (\x y. S y);
+
+length Nil = O;
+\x y. length (Cons x y) = \x y. S (length y);
+
+val append = \x y. _LISTit x y Cons;
+
+\x. append Nil x = \x. x;
+\x y z. append (Cons x y) z = \x y z. Cons x (append y z);
+
+val map = \f l. _LISTit l Nil (\x y. Cons (f x) y);
+
+\f. map f Nil = \f. Nil;
+\f x y. map f (Cons x y) = \f x y. Cons (f x) (map f y);
+
+datatype TREE 'a = Tip | Node from 'a (TREE 'a) (TREE 'a);
+
+val max = \x y. if le x y then y else x;
+val height = \t. _TREEit t O (\a x y. S (max x y));
+
+height Tip = O;
+\x y z. height (Node x y z) = \x y z. S (max (height y) (height z));
+
+(* vim: ft=sml
+ *)

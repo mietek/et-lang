@@ -1,0 +1,31 @@
+version 2.0.5, Nov 5 2004
+  - fixed some nasty bugs with let-polymorphism, reported by Tomasz
+    Wegrzynowski
+  - we can now handle multiple arguments in codatatypes without the help of
+    the UNION type
+  
+version 2.0.4, Oct 19 2004
+  - more documentation -- IPL manual along with a mental patch has been
+    included
+  - GNU Make for Windows binary has been included
+  - FALSE datatype has been renamed to BOTTOM (in startup.et)
+  - there are now a few aliases for startup.et types and values, used
+    also during pretty printing the result:
+      {}    = BOTTOM
+      case0 = _BOTTOMit
+      case1 = _UNITit
+      when  = _UNIONit
+      ()    = Unit
+    The Pair and _BOOLit shortcuts (, and if-then-else) are now also used
+    in pretty printing. 
+    snd and fst are used instead of _UNIONit. It is only relevant to pretty
+    printing, so don't be confused by the eta long form of + fst;.
+  
+version 2.0.3, Oct 3 2004
+  - fixed bug in coiterator generation
+  - added UNIT to startup.et
+
+version 2.0.1, Mar 13 2003
+  - implemented 'show' command, use 'show;' or 'show id;'
+  - session log is written to session.et in current directory, just in case 
+    you need to recall something from interactive session.

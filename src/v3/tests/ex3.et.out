@@ -1,0 +1,44 @@
++ datatype NAT = S from NAT | O;
+datatype NAT
+con  S : NAT -> NAT
+con  O : NAT
+iter _NATit : NAT -> ('a -> 'a) -> 'a -> 'a
+rec  _NATrec : NAT -> ((NAT * 'a) -> 'a) -> 'a -> 'a
+comp _NATit (S z) = \y x. y (_NATit z y x)
+comp _NATit (O ) = \z y. y
+comp _NATrec (S z) = \y x. y (z, _NATrec z y x)
+comp _NATrec (O ) = \z y. y
+
++ codatatype STREAM 'a = Shd to 'a & Stl to STREAM 'a;
+codatatype STREAM
+des    Shd : (STREAM 'a) -> 'a
+des    Stl : (STREAM 'a) -> (STREAM 'a)
+coiter _STREAMci : ('b -> 'a) -> ('b -> 'b) -> 'b -> (STREAM 'a)
+corec  _STREAMcr : ('b -> 'a) -> ('b -> ((STREAM 'a) + 'b)) -> 'b -> (STREAM 'a)
+comp   Shd (_STREAMci z y x) = z x
+comp   Stl (_STREAMci z y x) = _STREAMci z y (y x)
+comp   Shd (_STREAMcr z y x) = z x
+comp   Stl (_STREAMcr z y x) = when (y x) (\w. w) (_STREAMcr z y)
+
++ val smap = fn f s => _STREAMci (fn x => f (Shd x)) Stl s;
+val smap : ('a -> 'b) -> (STREAM 'a) -> (STREAM 'b)
++ val natstr = fn n => _STREAMci (fn x => x) S n;
+val natstr : NAT -> (STREAM NAT)
++ val sprefix = fn h s => _STREAMcr (fn x => h) (fn x => Inl s) s;
+val sprefix : 'a -> (STREAM 'a) -> (STREAM 'a)
++ val ns = natstr O;
+val ns : STREAM NAT
++ Shd ns;
+O : NAT
++ Shd (Stl ns);
+S O : NAT
++ val ns' = sprefix (S (S O)) ns;
+val ns' : STREAM NAT
++ Shd ns';
+S (S O) : NAT
++ Shd (Stl ns');
+O : NAT
++ 
+= (* vim: ft=sml 
+=  *)
+EOF.

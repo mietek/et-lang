@@ -1,0 +1,10 @@
+datatype PROD1 'a 'b = Pair' from 'a 'b;
+codatatype PROD2 'a 'b = Fst to 'a & Snd to 'b;
+val pair = \x y. _PROD2ci (\z. x) (\z. y) True;
+val split = \p z. z (Fst p) (Snd p);
+\x y. _PROD1it (Pair' x y) = \x y. split (pair x y);
+val prod = \f1 f2 x. Pair' (f1 x) (f2 x);
+val fst' = \p. _PROD1it p \x y. x;
+val snd' = \p. _PROD1it p \x y. y;
+\f g x. Fst (_PROD2ci f g x) = \f g x. fst' (prod f g x);
+\f g x. Snd (_PROD2ci f g x) = \f g x. snd' (prod f g x);
