@@ -1,0 +1,21 @@
+(* przyk³ad 6 *)
+datatype TOWER = Source | Dest | Aux;
+
+val mkMove = fn from_ to_ => (from_,to_);
+
+val subTower = fn s d a tower => _TOWERit tower s d a;
+
+val appSubToList = fn sub list => _LISTit list 
+                    (fn m => Cons (mkMove (sub (fst m)) (sub (snd m)))) Nil;
+
+val hanoi = fn number => _NATit number 
+  (fn x => append (appSubToList (subTower Source Aux Dest) x)
+            (Cons (mkMove Source Dest)  
+	          (appSubToList (subTower Aux Dest Source) x))) Nil;
+
+val hanoiStream = _STREAMci (fn x => x) 
+  (fn x => append (appSubToList (subTower Source Aux Dest) x)
+            (Cons (mkMove Source Dest)  
+	          (appSubToList (subTower Aux Dest Source) x)))
+  Nil;
+

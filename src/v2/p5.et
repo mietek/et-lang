@@ -1,0 +1,8 @@
+(* przyk³ad 5 *)
+codatatype STREAM 'a = Shd to 'a & Stl to STREAM 'a;
+
+val smap = fn fun str => _STREAMci (fn x=> fun (Shd x)) Stl str;
+
+val natstr = _STREAMci (fn x => x) Suc ;
+
+val getNth = fn stream number => Shd (_NATit number Stl stream); 

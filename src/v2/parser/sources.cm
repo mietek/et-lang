@@ -1,0 +1,17 @@
+Group
+  signature etLEXPOSITION
+  signature etFROMPARSER
+  signature etPARSER
+  functor   etFromParserFun
+  functor   etParserFun
+  structure etLexPosition
+  structure etFromParser
+  structure etParser
+is
+  ml-yacc/sources.cm
+  ../tools/sources.cm
+  et.lex
+  et.grm
+  etLexPos.sml
+  etFromParser.sml
+  etParser.sml

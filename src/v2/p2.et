@@ -1,0 +1,3 @@
+(* przyk³ad 2 *)
+val proof = fn a => when a (fn x => Inl (fst x),Inl (snd x))
+                           (fn y => Inr (fst y),Inr (snd y));

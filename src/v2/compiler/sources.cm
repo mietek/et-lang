@@ -1,0 +1,15 @@
+Group
+  signature etELAB
+  signature etPRETTYPRINT
+  signature etEVAL
+  signature etENVIRONMENT
+  structure etElab
+  structure etPrettyPrint
+  structure etEval
+  structure etEnvironment
+is
+  ../parser/sources.cm
+  ../tools/sources.cm
+  ../syntax/sources.cm
+  etUnifier.sml
+  etElab.sml

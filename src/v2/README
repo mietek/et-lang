@@ -1,0 +1,56 @@
+Installation instructions for ET
+
+All needed files should be copied from floppy disk to directory choosed
+for installation (eg. C:\et for Windows or /usr/local/et for Unix).
+
+1. Quick Windows installation.
+------------------------------
+For installation of binary version of ET on Microsoft Windows run file
+etwin.exe which is self-extracting archive.
+
+Run command et to start ET system.
+
+2. Quick Linux installation.
+----------------------------
+For installation of binary version of ET on Linux extract compressed tar
+file etlin.tgz using command 
+%tar xzf etlin.tgz
+
+Run command et to start ET system.
+
+(File run.x86-linux is dynamically linked with libc5. If you have system
+ with glibc you should use file run.x86-linux from sml distribution, or 
+ install needed libraries).
+
+3. Compilation from sources.
+----------------------------
+Unpack sources using command
+%tar xf etsrc.tar
+
+If you have installed sml with Compilation Manager (sml-cm) run command
+%sml-cm
+and (in sml) start compilation by
+- CM.make();
+then use
+- use "etMake.sml";
+to generate heap with compiled version of ET (et.name_of_your_system).
+
+If don't have sml with Compilation Manager run command
+%sml
+and compile ET by
+- use "et.sml"; use "etMake.sml";
+
+You should find file run.name_of_your_system in sml installation.
+To run ET you have to run this file with argument
+@SMLload=et.name_of_your_system.
+
+These are examples:
+- for Linux:
+./run.x86-linux @SMLload=et.x86-linux
+
+- for Windows:
+run.x86-win32.exe @SMLload=et.x86-win32
+
+
+
+

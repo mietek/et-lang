@@ -1,0 +1,5 @@
+(* przyk³ad 3 *)
+val ifZero = fn n a b => _NATit n (fn x =>b) a;
+
+val le = fn u => _NATit u (fn y v => ifZero v False (y (pred v))) 
+	                  (fn v => True);

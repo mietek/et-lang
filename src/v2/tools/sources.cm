@@ -1,0 +1,8 @@
+Group 
+  signature INT_INF
+  structure etTools
+  structure IntInf
+is
+  etTools.sml
+  int-inf-sig.sml
+  int-inf.sml

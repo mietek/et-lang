@@ -1,0 +1,16 @@
+Group
+  signature etABSTRACTSYNTAX
+  signature etPRETTYPRINT
+  signature etEVAL
+  signature etENVIRONMENT
+  structure etAbstractSyntax
+  structure etPrettyPrint
+  structure etEval
+  structure etEnvironment
+is
+  ../tools/sources.cm
+  etAbstractSyntax.sml
+  etEnvironment.sml
+  etPrettyPrint.sml
+  etEval.sml
+
