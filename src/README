@@ -1,0 +1,10 @@
+This is The Inferential Programming Language Interpreter v. 2.0
+programmed in Standard ML.
+
+You require Edinburgh Standard ML Core Language compiler v. 4.0
+to use this program. In ipl/src directory you find shell
+script "make-all". Edit it and run it. Then edit shell script
+"ipl" placed in your default directory for binaries.
+
+You can get Edinburgh SML from anonymous ftp at ftp.dcs.ed.ac.uk,
+directory export/edml.

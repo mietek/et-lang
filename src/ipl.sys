@@ -1,0 +1,57 @@
+ 
+(*********************************************************************)
+(*                                                                   *)
+(* IPL.SYS  - COMPILES THE PROGRAM AND SAVES IT IN A SML STATE FILE  *)
+(*                                                                   *)
+(*    Programmed in Standard ML by Tomasz Wierzbicki, 1992, 1993.    *)
+(*                                                                   *)
+(* Imports:                                                          *)
+(*       ipl_dir = ? : string                                        *)
+(*                                                                   *)
+(* Exports:                                                          *)
+(*       ipll_ver = ? : string                                       *)
+(*                                                                   *)
+(*********************************************************************)
+
+val ipll_ver = "ver. 2.0 (13-SEP-1993)";
+                                        
+app ( fn filename => use ( filename ^ ".sml" ) )
+    [                 
+       "iterec",
+       "arithme",
+       "listing",
+       "source",
+       "scanner",
+       "lexical",
+       "tylam", 
+       "typex",
+       "lamterm",
+       "unify",
+       "typofter",
+       "eval",
+       "typinfo",
+       "environ",
+       "lampars",
+       "typaram",
+       "gettype",
+       "genelim",
+       "genintro",
+       "monamon",
+       "gentraco",
+       "gentrade",
+       "typars",
+       "cotypars",
+       "parser",
+       "ipll"
+    ];
+
+let
+   val msg = "Welcome to the IPL. Use 'ipl' function in SML and " ^
+             "'exit' command in IPL to     switch between these two " ^
+             "systems.";
+in
+   ExportML ( ipl_dir ^ "/ipl.env" , msg , [ipl_dir ^ "/ipl.login"] )
+end;
+
+(* end of IPLL.SYS ***************************************************)
+

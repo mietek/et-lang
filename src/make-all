@@ -1,0 +1,43 @@
+#! /bin/sh
+#make-all: compile IPL sources end export SML environment file
+
+###################### edit the following lines ##########################
+
+#Define here two environment variables:
+# IPLBIN: the directory to hold Edinburg SML environment file
+# SMLCOMP: ML compliler (usually "sml" or "edml")
+# Use whole paths from the root directory!
+# Do not move files placed in directory $IPLBIN, rather change this
+# variable and recompile the program
+IPLBIN=/home/splawski/bin
+SMLCOMP="edml"
+
+#Additional parameter:
+# output file for sml listing
+RECOMP_LST="recomp.lst"
+
+##########################################################################
+
+echo Started at `date`
+
+if test -f $IPLBIN/ipl.login
+  then echo 'ipl.login already copied to '$IPLBIN', OK.'
+  else echo 'Copying ipl.login to '$IPLBIN
+       cp ipl.login $IPLBIN/ipl.login
+fi
+
+echo 'Creating file ipl'
+echo '#! /bin/sh' > $IPLBIN/ipl
+echo '# Run this file to invoke ipl system' >> $IPLBIN/ipl
+echo 'FAM=/usr/local/bin/fam' >> $IPLBIN/ipl
+echo '$FAM -h 10000 $* '$IPLBIN'/ipl.env' >> $IPLBIN/ipl
+chmod 755 $IPLBIN/ipl
+
+echo 'Compiling IPL sources using '$SMLCOMP
+echo 'Output will be redirected to file '$RECOMP_LST
+echo 'Be patient -- this will take a while ... (about 1 minute)'
+echo 'val ipl_dir="'$IPLBIN'";use"ipl.sys";exit;' | $SMLCOMP >& $RECOMP_LST
+
+echo Finished at `date`
+
+echo 'Now edit file '$IPLBIN'/ipl'
