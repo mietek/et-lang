@@ -51,7 +51,7 @@ fun gentracon newtref newtycon pos conum conty elim =
                                          )
                                       )
                                       (conum,
-                                         Application 
+                                         Application
                                            ((if elim
                                                then Recursor
                                                else Iterator) newtycon,
@@ -75,4 +75,4 @@ fun gentracon newtref newtycon pos conum conty elim =
   end;
 
 (* end of GENTRACON.SML **********************************************)
-                                              
+

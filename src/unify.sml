@@ -18,24 +18,24 @@
 (*       con Type_mismatch = - : exn                                 *)
 (*                                                                   *)
 (*********************************************************************)
-                                           
+
 exception Infinite_type and Type_mismatch;
 
 fun occurs tr ( Tyvar (tr' as ref None) ) = if tr = tr'
                                                then raise Infinite_type
-                                               else ()  
+                                               else ()
   | occurs tr ( Tyvar ( ref (Some ty) ) ) = occurs tr ty
   | occurs tr ( Tycon (_,para) ) = app (occurs tr) para
   | occurs tr ( Tyfun (t1,t2) ) = ( occurs tr t1 ; occurs tr t2 )
   | occurs tr ( Typair (t1,t2) ) = ( occurs tr t1 ; occurs tr t2 )
   | occurs tr ( Tyun (t1,t2) ) = ( occurs tr t1 ; occurs tr t2 )
   | occurs _ _ = ();
-     
+
 infix unify;
 fun ( Tyvar (tr as ref None) ) unify t =
       let
          val t' = derefer t;
-      in                    
+      in
          case t' of
             Tyvar tr' => if tr = tr'
                             then ()

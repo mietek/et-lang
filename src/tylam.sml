@@ -60,6 +60,6 @@ datatype term   = Parameter   of int                |
                                    conlist : constr list
                                  } |
                   Marker;
-                                                                     
+
 (* end of TYLAM.SML **************************************************)
 

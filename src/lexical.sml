@@ -45,11 +45,11 @@ datatype symbol = Amper | Bar | Colon | Equal | Plus | Semicolon |
 
 local
    val cursym = ref Unknown;
-in  
+in
    fun nextsym () =
       ( skip();
-        if eot() 
-           then cursym := End_of_text 
+        if eot()
+           then cursym := End_of_text
            else
               case getchar() of
                  "&" => ( nextchar() ; cursym := Amper       ) |
@@ -71,8 +71,8 @@ in
                  "=" => ( nextchar();
                           if not ( eot() ) andalso getchar() = ">"
                              then ( nextchar() ; cursym := Arrow )
-                             else cursym := Equal 
-                        ) |                    
+                             else cursym := Equal
+                        ) |
                  "-" => ( nextchar() ;
                           if not ( eot() ) andalso getchar() = ">"
                              then ( nextchar() ; cursym := Thinarrow )
@@ -84,13 +84,13 @@ in
                              else cursym := Unknown
                         ) |
                  "\""=> ( nextchar();
-                          cursym := Strval ( getstring() ) 
+                          cursym := Strval ( getstring() )
                         ) |
                  "'" => ( nextchar();
-                          cursym := Ident' ( getalnum() ) 
-                        ) | 
+                          cursym := Ident' ( getalnum() )
+                        ) |
                  "_" => ( nextchar();
-                          cursym := Ident_ ( getalnum() ) 
+                          cursym := Ident_ ( getalnum() )
                         ) |
                   _  => if uppercase ( getchar() )
                            then cursym :=
@@ -108,7 +108,7 @@ in
                               end
                            else
                               if lowercase ( getchar() )
-                                 then cursym := 
+                                 then cursym :=
                                     let
                                        val str = getalnum();
                                     in
@@ -138,12 +138,12 @@ in
                                     end
                                  else (nextchar() ; cursym := Unknown)
       ); (* nextsym *)
-                                                 
+
    fun getsym () = ! cursym;
-end;    
+end;
 
 fun start_text name = ( open_text name ; nextsym() );
 val stop_text = close_text;
-                          
+
 (* end of LEXICAL.SML ************************************************)
-                                       
+

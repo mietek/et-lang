@@ -1,4 +1,4 @@
-            
+
 (*********************************************************************)
 (*                                                                   *)
 (*        ENVIRON.SML - COMMON DEFINITIONS FOR AN ENVIRONMENT        *)
@@ -30,15 +30,15 @@
 (*          show_env   = fn: environment -> string -> environment    *)
 (*                                                                   *)
 (*********************************************************************)
-                             
+
 exception Undef_constr and Undef_type and Unbound_value;
 
 local
    datatype parameter = Formal | BoundVal of term;
 
-   val hidden = "[hidden]";                          
+   val hidden = "[hidden]";
    val sh = size hidden;
-   fun ishidden str = 
+   fun ishidden str =
       let
          val len = size str;
       in
@@ -49,7 +49,7 @@ in
       environment = E of (string * parameter) list * tycon ref list
    with
       val emptyenv = E (nil,nil);
-               
+
       fun find_param str ( E (bv , _) ) =
          let
             fun f n ((id , Formal) :: bv) =
@@ -61,20 +61,20 @@ in
                       then nest n trm
                       else f n bv
               | f _ nil = raise Unbound_value;
-         in                    
+         in
             f 0 bv
          end;
 
       fun find_con str ( E (_ , ts) ) =
-         let      
-            exception Not_found; 
-      
+         let
+            exception Not_found;
+
             fun f ( ( con as Constr (ref {name=id,...}) ) :: cons ) =
                    if id = str
                       then con
                       else f cons
               | f nil = raise Not_found;
-      
+
             fun g ( ref (Type {conlist=cons,...}) :: ts ) =
                    ( f cons handle Not_found => g ts )
               | g nil = raise Undef_constr;
@@ -86,12 +86,12 @@ in
          let
             fun f ( ( t as ref (Type {name=id,...}) ) :: ts ) =
                    if id = str
-                      then t                          
+                      then t
                       else f ts
               | f nil = raise Undef_type;
          in
             f ts
-         end;          
+         end;
 
       fun ins_param str (E (bv , ts)) = E ((str , Formal) :: bv , ts);
 
@@ -109,10 +109,10 @@ in
 
       fun repl_ty (newt as ref (Type {name=str,conlist=ncl,...}))
          ( env as E (bv , ts) ) =
-         let               
+         let
             fun hide str = if ishidden str then str else str ^ hidden;
          in
-            (case find_ty str env of 
+            (case find_ty str env of
                 tr as ref (Type { name    = id,
                                   induc   = ic,
                                   coty    = cty,
@@ -124,7 +124,7 @@ in
                    tr := Type { name    = hide id,
                                 induc   = ic,
                                 coty    = cty,
-                                varlist = vl,   
+                                varlist = vl,
                                 typiter = tyi,
                                 typrec  = tyr,
                                 conlist = cl
@@ -147,7 +147,7 @@ in
                 ) ncl;
             E (bv , newt :: ts)
          end;
-      
+
       fun show_env ( env as E (bv , ts) ) str =
          ( if str = ""
               then ( out "Types:" ;
@@ -155,23 +155,23 @@ in
                         then out "  -"
                         else revapp
                                 (fn ref (Type {name=id,...}) =>
-                                    if ishidden id 
+                                    if ishidden id
                                        then ()
                                        else out (" " ^ id)
                                 ) ts;
                      out "\nValues:" ;
                      if bv = nil
-                        then out "  -"  
+                        then out "  -"
                         else revapp ( fn (id,_) => out (" " ^ id) ) bv;
                      out "\n"
                    )
               else ( typinfo ( find_ty str env ) handle Undef_type =>
                         out "There's no such type\n"
                    );
-          env                                                    
-        );           
+          env
+        );
    end
-end;                                
+end;
 
 (* end of ENVIRON.SML ************************************************)
 

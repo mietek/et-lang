@@ -44,7 +44,7 @@ fun gentrades newtref newtycon pos conum conty elim = eval
             )
             (#2 (iter (fn (k , trm) => (pred k,
                                    Application (trm , Parameter k)))
-                      (conum, 
+                      (conum,
                        (if elim then Recursor else Iterator) newtycon
                       )
                       conum
@@ -58,4 +58,4 @@ fun gentrades newtref newtycon pos conum conty elim = eval
   );
 
 (* end of GENTRADES.SML **********************************************)
-                                              
+

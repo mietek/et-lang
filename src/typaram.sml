@@ -26,24 +26,24 @@
 (*          usedtypar  = fn: typaram -> unit                         *)
 (*                                                                   *)
 (*********************************************************************)
-                                   
+
 exception Unknown_type_param
       and Bad_typaram
       and Typaram_expected
       and Unused_typaram;
-                                   
+
 abstype
    typaram = TP of (string * tyvar ref * bool ref) list
 with
    fun gettypar () =
       let
-         fun f param = 
+         fun f param =
             case getsym() of
                Ident' str =>
                   ( nextsym();
                     f ( param @ [ (str , ref None , ref false) ] )
                   ) |
-               _ => param; 
+               _ => param;
       in
          nextsym() ; TP (f nil)
       end;
@@ -53,21 +53,21 @@ with
              then (u := true ; tr)
              else findtypar str (TP param)
      | findtypar _ (TP nil) = raise Unknown_type_param;
-         
+
    fun checktypar (TP param) =
       let
-         fun f ((id,_,_) :: param) = 
+         fun f ((id,_,_) :: param) =
                 ( case getsym() of
                      Ident' str => if id = str
                                       then ( nextsym() ; f param )
                                       else raise Bad_typaram |
-                              _ => raise Typaram_expected                    
-                )              
+                              _ => raise Typaram_expected
+                )
            | f nil = ();
       in
-         f param      
+         f param
       end;
-                              
+
    fun mktyvars (TP param) = map (#2) param;
 
    fun usedtypar (TP param) =

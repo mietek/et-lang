@@ -27,7 +27,7 @@ val typofterm =
         | f  _  ( Constructor ( Constr (ref {ty=t,...}) ) ) = tycopy t
         | f  _  ( Iterator ( ref (Type {typiter=t,...}) ) ) = tycopy t
         | f  _  ( Recursor ( ref (Type {typrec =t,...}) ) ) = tycopy t
-        | f var ( Lambda trm ) = 
+        | f var ( Lambda trm ) =
              let
                 val argty = Tyvar (ref None);
              in
@@ -36,7 +36,7 @@ val typofterm =
         | f var ( Application (rator,rand) ) =
              let
                 val tyran = derefer (f var rand);
-             in 
+             in
                 case derefer (f var rator) of
                    Tyfun (t1,t2) => ( t1 unify tyran ; t2 ) |
                    Tyvar tr =>
@@ -66,21 +66,21 @@ val typofterm =
               val resulty = Tyvar (ref None);
             in
               Tyfun (Tyun (lefty , righty),
-                     Tyfun (Tyfun (lefty , resulty), 
+                     Tyfun (Tyfun (lefty , resulty),
                             Tyfun (Tyfun (righty , resulty),
                                    resulty
                                   )
                            )
                     )
             end
-        | f var Inl = 
-            let 
+        | f var Inl =
+            let
               val lefty = Tyvar (ref None)
             in
               Tyfun (lefty , Tyun (lefty , Tyvar (ref None)))
             end
-        | f var Inr = 
-            let 
+        | f var Inr =
+            let
               val righty = Tyvar (ref None)
             in
               Tyfun (righty , Tyun (Tyvar (ref None) , righty))
@@ -94,7 +94,7 @@ val typofterm =
                   result
                end
              )
-        | f var ( Equality (t1,t2) ) = 
+        | f var ( Equality (t1,t2) ) =
              ( f var t1 unify f var t2 ; Tybool )
         | f var ( Pair (t1,t2) ) = Typair ( f var t1 , f var t2 )
         | f var Fst = let

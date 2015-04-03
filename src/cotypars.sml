@@ -48,9 +48,9 @@
 (*       cotypars     = fn: environment -> environment               *)
 (*                                                                   *)
 (*********************************************************************)
-                                
+
 exception Tycon_expected
-      and Destructor_expected 
+      and Destructor_expected
       and Duplicated_destructor;
 
 fun cotypars env =
@@ -62,9 +62,9 @@ fun cotypars env =
     fun tydef newtid =
       let
         val param = gettypar();
-      in             
+      in
         if getsym() = Equal
-          then 
+          then
           ( nextsym();
             let
               fun getcon conslist =
@@ -74,8 +74,8 @@ fun cotypars env =
                     app ( fn (id , _) => if id = str
                             then raise Duplicated_destructor
                             else () ) conslist;
-                    let                   
-                      val contype = 
+                    let
+                      val contype =
                         let
                           fun f ts =
                             let
@@ -100,11 +100,11 @@ fun cotypars env =
                         end;
 
                       val conslist' = conslist @ [(str, contype)];
-                    in                   
+                    in
                       if getsym() = Amper
                         then ( nextsym() ; getcon conslist' )
                         else conslist'
-                    end   
+                    end
                   ) |
                   _ => raise Destructor_expected;
 
@@ -112,7 +112,7 @@ fun cotypars env =
                               then nil
                               else getcon nil;
               val conum = length consts;
-            in       
+            in
               if getsym() = Semicolon
                 then
                   let
@@ -134,9 +134,9 @@ fun cotypars env =
                         typrec  = if isind then genintro newt
                                     (map (#2) consts) true result
                                     else tpi,
-                        conlist = #1 ( fold 
+                        conlist = #1 ( fold
                           (fn ((str,conty) , (cl,pos)) =>
-                             let 
+                             let
                                val trai' = gentrades newtref newtycon
                                                pos conum conty false;
                              in
@@ -148,13 +148,13 @@ fun cotypars env =
                                     trar = if isind
                                         then gentrades newtref newtycon
                                                    pos conum conty true
-                                        else trai'  
+                                        else trai'
                                   } ) :: cl,
                                 succ pos
-                               ) 
+                               )
                             end
-                          ) consts (nil,0) )      
-                      }; 
+                          ) consts (nil,0) )
+                      };
                     newtref := Some (Tycon (newtycon,
                                map Tyvar (mktyvars param) ));
                     show_env (repl_ty newtycon env) newtid

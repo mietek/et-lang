@@ -1,4 +1,4 @@
-   
+
 (*********************************************************************)
 (*                                                                   *)
 (*    MONAMON.SML - THE MONOTONICITY / ANTIMONOTONICITY FUNCTIONS    *)
@@ -37,7 +37,7 @@ fun mon posocc var t elim =
        Lambda (Lambda (Lambda
          (Application
             (Application (mon posocc var t2 elim , Parameter 2),
-             Application                                   
+             Application
                (Parameter 1,
                 Application
                   (Application (mon (not posocc) var t1 elim,
@@ -48,22 +48,22 @@ fun mon posocc var t elim =
             )
          ))) |
      Tycon (t as ref (Type{conlist=cl,varlist=vl,coty=ct,...}),para) =>
-       let                                              
+       let
          fun save_var ((v as ref tv) :: vs) vs' =
                ( v := None ; save_var vs (vs' @ [tv]) )
            | save_var nil vs' = vs';
           fun restore_var (v :: vs) (tv :: vs') =
                ( v := tv ; restore_var vs vs' )
            | restore_var nil nil = ();
-                                 
+
          val V2  = Tyvar (ref None);
          val vl' = save_var vl nil;
          val t' =
-          if ct 
-           then Lambda (Lambda (Application 
+          if ct
+           then Lambda (Lambda (Application
            (revfold
              (fn (c as Constr (ref {ty=conty,...}) , trm) =>
-                let 
+                let
                   val Tyfun (_,p) = conty;
                 in
                   Application
@@ -71,11 +71,11 @@ fun mon posocc var t elim =
                      Lambda
                       ((fn x =>
                         if elim
-                          then 
-                            Application 
+                          then
+                            Application
                               (Application
                                  (let
-                                    val t' = substy 
+                                    val t' = substy
                                       (fn ty =>
                                          case ty of
                                            Tycon (t',_) => t = t' |
@@ -85,9 +85,9 @@ fun mon posocc var t elim =
                                       (restore_var vl
                                            (map (fn x => Some x) para);
                                        mon posocc var t' elim);
-                                  in 
+                                  in
                                     app (fn v =>v := None) vl;
-                                    tt               
+                                    tt
                                   end,
                                   Inr
                                  ),
@@ -98,15 +98,15 @@ fun mon posocc var t elim =
                        (Application
                           (Application
                              (let
-                                val t' = substy 
+                                val t' = substy
                                   (fn ty => case ty of
                                               Tycon (t',_) => t = t' |
                                                          _ => false)
                                   V2 p;
-                                val tt = (restore_var vl 
+                                val tt = (restore_var vl
                                            (map (fn x => Some x) para);
                                           mon posocc var t' elim);
-                              in 
+                              in
                                 app (fn v => v := None) vl;
                                 tt
                               end,
@@ -133,7 +133,7 @@ fun mon posocc var t elim =
                    let
                      val conpara = splitconty conty;
                      val paranum = length conpara;
-                   in                             
+                   in
                      iter (fn trm => Lambda trm)
                           (#2
                             (revfold
@@ -144,35 +144,35 @@ fun mon posocc var t elim =
                                     Application
                                       (Application
                                          (let
-                                           val t' = substy 
+                                           val t' = substy
                                              (fn ty => case ty of
                                                 Tycon (t',_) => t = t'|
                                                            _ => false)
                                              V2 p;
                                            val tt =
-                                            (restore_var vl 
+                                            (restore_var vl
                                              (map (fn x=>Some x) para);
                                              mon posocc var t' elim);
-                                          in 
+                                          in
                                            app (fn v => v := None) vl;
                                            tt
                                           end,
                                           Parameter (paranum + 1)
-                                         ),            
-                                       if elim 
+                                         ),
+                                       if elim
                                         then Application
                                          (Application
                                             (let
-                                           val t' = substy 
+                                           val t' = substy
                                              (fn ty => case ty of
                                                 Tycon (t',_) => t = t'|
                                                            _ => false)
                                              (Tyvar var) p;
                                            val tt =
-                                            (restore_var vl 
+                                            (restore_var vl
                                              (map (fn x=>Some x) para);
                                              mon posocc var t' elim);
-                                          in 
+                                          in
                                            app (fn v => v := None) vl;
                                            tt
                                           end,
@@ -194,7 +194,7 @@ fun mon posocc var t elim =
                   )
              )
              cl
-             ( Application 
+             ( Application
                  ((if elim then Recursor else Iterator) t,
                   Parameter 0
                  )
@@ -249,6 +249,6 @@ fun mon posocc var t elim =
             )
          ))
  ); (* mon *)
-                                     
+
 (* end of MONAMON.SML ************************************************)
 

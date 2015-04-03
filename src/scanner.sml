@@ -30,9 +30,9 @@
 exception EOT_in_comment and EOT_in_string;
 
 fun skip () =
-   let 
+   let
       fun white ch = ch = " " orelse ch = "\t" orelse ch = "\n";
-   in               
+   in
       if not ( eot() ) andalso white ( getchar() )
          then ( nextchar() ; skip() )
          else ()
@@ -40,11 +40,11 @@ fun skip () =
 
 fun comment () =
    ( if getchar() = "*"
-        then ( nextchar();            
+        then ( nextchar();
                if getchar() = ")"
                   then nextchar()
                   else comment()
-             )      
+             )
         else ( nextchar() ; comment() )
    ) handle EOT => raise EOT_in_comment;
 
@@ -54,7 +54,7 @@ fun digit     (ch : character) = ch >= "0" andalso ch <= "9";
 
 fun getalnum () =
    let
-      fun alfanum ch = uppercase ch orelse lowercase ch orelse 
+      fun alfanum ch = uppercase ch orelse lowercase ch orelse
                        digit ch orelse ch = "'" orelse ch = "_";
       fun f s =
          if not ( eot() ) andalso alfanum ( getchar() )
@@ -65,16 +65,16 @@ fun getalnum () =
                     f (s ^ ch)
                  end
             else s
-   in              
+   in
       f ""
-   end; 
+   end;
 
-fun getstring () =  
-   let 
+fun getstring () =
+   let
       fun f s =
-         let 
+         let
             val ch = getchar();
-         in       
+         in
             nextchar();
             if ch = "\""
                then s

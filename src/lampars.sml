@@ -36,7 +36,7 @@ exception Right_brace_expected
       and Unknown_elim_kind
       and In_expected
       and End_expected
-      and Term_expected       
+      and Term_expected
       and Semicolon_expected
       and Equal_expected
       and Identifier_expected
@@ -50,18 +50,18 @@ fun lambdaterm env =
     fun atomic () =
       ( case getsym() of
           Identlower str =>
-            let 
+            let
               val trm = find_param str env;
             in
-              nextsym() ; trm          
-            end |   
-          Identupper str => 
-            let 
+              nextsym() ; trm
+            end |
+          Identupper str =>
+            let
               val trm = Constructor ( find_con str env )
             in
-              nextsym() ; trm          
-            end |   
-          Ident_ str => 
+              nextsym() ; trm
+            end |
+          Ident_ str =>
             let
               val len = size str;
               val trm =
@@ -112,8 +112,8 @@ fun lambdaterm env =
                  else raise Unknown_elim_kind
                 ) handle Undef_type => raise Undef_elim;
             in
-              nextsym() ; trm          
-            end |   
+              nextsym() ; trm
+            end |
           Truesym  => ( nextsym() ; True  ) |
           Falsesym => ( nextsym() ; False ) |
           Fstsym   => ( nextsym() ; Fst   ) |
@@ -125,7 +125,7 @@ fun lambdaterm env =
           Case1sym => ( nextsym() ; Case1 ) |
           Circle   => ( nextsym() ; Unit  ) |
           Left_brace =>
-            ( nextsym();                 
+            ( nextsym();
               let
                 val trm = lambdaterm env;
               in
@@ -135,41 +135,41 @@ fun lambdaterm env =
               end
             ) |
           Funsym =>
-            ( nextsym();                                          
+            ( nextsym();
               let
                 fun getparam lev env =
                   case getsym() of
                     Identlower str =>
                       ( nextsym();
                         getparam (succ lev) (ins_param str env)
-                      ) |   
+                      ) |
                     _ => (lev , env);
-     
+
                 val (lev , env') = getparam 0 env;
               in
                 if lev = 0
                   then raise Parameter_expected
-                  else  
+                  else
                     if getsym() <> Arrow
                       then raise Arrow_expected
                       else ( nextsym();
-                             iter (fn t => Lambda t) 
+                             iter (fn t => Lambda t)
                                   (lambdaterm env') lev
                            )
               end
             ) |
           Letsym =>
             ( nextsym();
-              let 
-                fun locdec env = 
-                  let 
-                    val env' = 
+              let
+                fun locdec env =
+                  let
+                    val env' =
                       ( nextsym();
                         case getsym() of
                           Identlower str =>
                             ( nextsym();
                               if getsym() = Equal
-                                then 
+                                then
                                 ( nextsym();
                                   let
                                     val trm = lambdaterm env;
@@ -183,16 +183,16 @@ fun lambdaterm env =
                             ) |
                           _ => raise Identifier_expected
                       );
-                  in  
+                  in
                     nextsym();
                     case getsym() of
                       Valsym => locdec env' |
                       Insym  => ( nextsym() ; env' ) |
                            _ => raise In_expected
-                  end;                            
+                  end;
 
                 val trm = lambdaterm (locdec env);
-              in      
+              in
                 if getsym() = Endsym
                   then ( nextsym() ; trm )
                   else raise End_expected
@@ -204,11 +204,11 @@ fun lambdaterm env =
                 val t1 = lambdaterm env;
               in
                 if getsym() = Thensym
-                  then                    
+                  then
                   ( nextsym();
                     let
                       val t2 = lambdaterm env;
-                    in                        
+                    in
                       if getsym() = Elsesym
                         then
                         ( nextsym();
@@ -220,9 +220,9 @@ fun lambdaterm env =
                   else raise Then_expected
               end
             ) |
-          _ => raise Term_expected  
+          _ => raise Term_expected
       ); (* atomic *)
-  
+
     fun appl () =
       let
         fun f trm =
@@ -253,7 +253,7 @@ fun lambdaterm env =
         fun f trm =
           if getsym() = Colon
             then ( nextsym() ; f (Pair (trm , appl())) )
-            else trm;                                 
+            else trm;
       in
         f ( appl() )
       end;
@@ -267,9 +267,9 @@ fun lambdaterm env =
       in
         f ( pairexp() )
       end;
-  in              
+  in
     eqexp()
   end; (* lambdaterm *)
- 
+
 (* end of LAMPARS.SML ************************************************)
 

@@ -1,4 +1,4 @@
- 
+
 (*********************************************************************)
 (*                                                                   *)
 (* IPL.SYS  - COMPILES THE PROGRAM AND SAVES IT IN A SML STATE FILE  *)
@@ -14,16 +14,16 @@
 (*********************************************************************)
 
 val ipll_ver = "ver. 2.0 (13-SEP-1993)";
-                                        
+
 app ( fn filename => use ( filename ^ ".sml" ) )
-    [                 
+    [
        "iterec",
        "arithme",
        "listing",
        "source",
        "scanner",
        "lexical",
-       "tylam", 
+       "tylam",
        "typex",
        "lamterm",
        "unify",

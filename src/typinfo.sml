@@ -24,15 +24,15 @@
 (*       typinfo  = fn: tycon ref -> unit                            *)
 (*                                                                   *)
 (*********************************************************************)
-         
+
 fun typinfo ( ref (Type {name=id,induc=ic,coty=ct,varlist=vl,
                          typiter=ti,typrec=tr,conlist=cl}) ) =
    let
-      val conum  = length cl;                                        
-      val varnum = revfold (fn (tr,k) => (tr := Label k;succ k)) vl 0; 
+      val conum  = length cl;
+      val varnum = revfold (fn (tr,k) => (tr := Label k;succ k)) vl 0;
       val costr  = if ct then "co" else "";
 
-      fun info elim =                         
+      fun info elim =
          let
             val eliminator =
               costr ^ (if elim then "rec  " else "iter ");
@@ -40,8 +40,8 @@ fun typinfo ( ref (Type {name=id,induc=ic,coty=ct,varlist=vl,
                                  else (if elim then "rec" else "it");
             fun f (n , Lambda trm) = f (succ n , trm)
               | f x = x;
-            val prinpar = iter 
-                           (fn k => ( out (" " ^ chr (z-k)) ; succ k )) 
+            val prinpar = iter
+                           (fn k => ( out (" " ^ chr (z-k)) ; succ k ))
          in
             out ( eliminator ^ "_" ^ id ^ elimname ^ " : " );
             printy (if elim then tr else ti) ; out "\n";
@@ -84,11 +84,11 @@ fun typinfo ( ref (Type {name=id,induc=ic,coty=ct,varlist=vl,
                    end
               ) cl
          end;
-   in                        
+   in
       numtyvar ti varnum;
-      out ( costr ^ "datatype " ^ id );    
+      out ( costr ^ "datatype " ^ id );
       iter (fn k => ( out ( " '" ^ chr (a+k) ) ; succ k )) 0 varnum;
-      out "\n";          
+      out "\n";
       app ( fn Constr (ref {name=str,ty=t,...}) =>
                 ( out ( (if ct then "des    " else  "con  ") ^ str ^
                         " : " ) ; printy t ; out "\n" )

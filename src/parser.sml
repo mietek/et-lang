@@ -42,14 +42,14 @@
 (*       con Use_error       = - : exn                               *)
 (*                                                                   *)
 (*********************************************************************)
-                                                                       
+
 exception Empty_filename and String_expected and Use_error;
 
-fun parse filename environ = 
-  let             
-    fun program env = 
+fun parse filename environ =
+  let
+    fun program env =
       let
-        fun ermes str = 
+        fun ermes str =
           ( sweep();
             out ("Error: " ^ str ^ "\n" );
             if filename = ""
@@ -68,20 +68,20 @@ fun parse filename environ =
                     else raise Semicolon_expected
                 ) |
               Delsym =>
-              let  
+              let
                 fun f ss =
                   case getsym() of
                     Identlower str => ( nextsym() ; f (str::ss) ) |
                     _ => ss;
-              in            
-                nextsym(); 
+              in
+                nextsym();
                 case getsym() of
                   Identlower _ =>
                     let
                       val ss = f nil;
                     in
                       if getsym() = Semicolon
-                        then ( true, 
+                        then ( true,
                                fold ( fn (str,env) =>
                                       ( out ("deleting " ^ str ^ "\n");
                                         del_val str env
@@ -98,8 +98,8 @@ fun parse filename environ =
                     Strval str =>
                       if str = ""
                         then raise Empty_filename
-                        else 
-                          ( nextsym(); 
+                        else
+                          ( nextsym();
                             if getsym() = Semicolon
                               then (true , parse str env)
                               else raise Semicolon_expected
@@ -107,38 +107,38 @@ fun parse filename environ =
                     _ => raise String_expected
                 ) |
               Showsym =>
-                ( nextsym();             
+                ( nextsym();
                   case getsym() of
-                     Identlower str =>         
+                     Identlower str =>
                         ( nextsym();
                           if getsym() = Semicolon
                              then (true , show_env env str)
-                             else raise Semicolon_expected 
+                             else raise Semicolon_expected
                         ) |
                      Identupper str =>
                         ( nextsym();
                           if getsym() = Semicolon
                              then (true , show_env env str)
-                             else raise Semicolon_expected 
+                             else raise Semicolon_expected
                         ) |
                      Semicolon => (true , show_env env "") |
                      _ => raise Semicolon_expected
                 ) |
               Typesym => (true , typars env) |
               Cotysym => (true , cotypars env) |
-              Valsym => 
+              Valsym =>
                 ( nextsym();
                   case getsym() of
                     Identlower str =>
                       ( nextsym();
                         if getsym() = Equal
-                          then 
+                          then
                           ( nextsym();
                             let
                               val trm = lambdaterm env;
                             in
                               if getsym() = Semicolon
-                                then 
+                                then
                                    let
                                      val ty = typofterm trm;
                                      val env' = repl_val str trm env;
@@ -161,21 +161,21 @@ fun parse filename environ =
                 in
                   if getsym() = Semicolon
                     then
-                      let                    
+                      let
                         val ty = typofterm trm;
                         val env' = repl_val "it" trm env;
-                      in                         
+                      in
                         printerm 0 (eval trm);
                         out " : ";
                         printype ty;
                         out "\n";
                         (true , env')
-                      end          
+                      end
                     else raise Semicolon_expected
-                end 
+                end
           ) handle
               EOT_in_comment    => ermes "end of text inside comment" |
-              EOT_in_string      => ermes "end of text inside string" | 
+              EOT_in_string      => ermes "end of text inside string" |
               Unbound_value       => ermes "unbound value identifier" |
               Right_brace_expected              => ermes ") expected" |
               Parameter_expected        => ermes "parameter expected" |
@@ -212,19 +212,19 @@ fun parse filename environ =
               Use_error                      => if filename = ""
                                                   then (true , env)
                                                   else raise Use_error;
-      in                  
+      in
         if cont
           then ( nextsym() ; program env' )
           else env'
       end; (* program *)
 
-    val environ' = 
+    val environ' =
       ( start_text filename;
         program environ
-      ) handle SOpen     => ( out ( "Failure during " ^ 
+      ) handle SOpen     => ( out ( "Failure during " ^
                                     "opening source file\n"
                                   );
-                              raise Use_error 
+                              raise Use_error
                             ) |
                Use_error => ( stop_text() ; raise Use_error ) |
                Io _      => ( out "File operation failure\n" ;

@@ -18,7 +18,7 @@
 (*********************************************************************)
 
 fun genintro newt contys elim result =
-   let               
+   let
       val V = if elim then Tyun (newt , result) else result;
    in
      fold (fn (t,ts) =>

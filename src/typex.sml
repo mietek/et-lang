@@ -25,7 +25,7 @@
 (*      printype = fn: typex -> unit                                 *)
 (*                                                                   *)
 (*********************************************************************)
-                                   
+
 fun derefer ( Tyvar ( ref (Some ty) ) ) = derefer ty
   | derefer t = t;
 
@@ -60,16 +60,16 @@ fun tycopy t =
                                (n',ntrs',p::ps)
                             end
                        ) para (n , ntrs , nil);
-             in                      
+             in
                 ( n' , ntrs' , Tycon (t , para') )
-             end 
+             end
         | copy n ntrs ( Tyfun (t1 , t2) ) =
              let
                 val (n'  , ntrs'  , t1') = copy n  ntrs  t1;
                 val (n'' , ntrs'' , t2') = copy n' ntrs' t2;
              in
                 ( n'' , ntrs'' , Tyfun (t1',t2') )
-             end                       
+             end
         | copy n ntrs Tybool = (n , ntrs , Tybool)
         | copy n ntrs Tyunit = (n , ntrs , Tyunit)
         | copy n ntrs Absurd = (n , ntrs , Absurd)
@@ -94,21 +94,21 @@ fun tycopy t =
    end; (* tycopy *)
 
 fun numtyvar ( Tyvar ( tr as (ref None) ) ) n =
-       ( tr := Label n ; succ n )           
+       ( tr := Label n ; succ n )
   | numtyvar ( Tyvar ( ref (Some ty) ) ) n = numtyvar ty n
   | numtyvar ( Tycon (_ , ts) ) n = revfold (uncurry numtyvar) ts n
   | numtyvar ( Tyfun (t1 , t2) ) n = numtyvar t2 (numtyvar t1 n)
   | numtyvar ( Typair (t1 , t2) ) n = numtyvar t2 (numtyvar t1 n)
   | numtyvar ( Tyun (t1 , t2) ) n = numtyvar t2 (numtyvar t1 n)
   | numtyvar _ n = n;
-                                        
+
 val a = ord "a";
 
 fun printy ( Tyvar ( ref (Label n) ) ) =
        out ( "'" ^ chr (a + n) )
   | printy ( Tyvar ( ref (Some ty) ) ) = printy ty
   | printy ( Tycon (ref (Type {name=id,...}) , params) ) =
-       ( out id; 
+       ( out id;
          app ( fn t => ( out " ";
                          case derefer t of
                             Tyvar       _ => printy t |
@@ -146,12 +146,12 @@ fun printy ( Tyvar ( ref (Label n) ) ) =
          out " * ";
          case derefer t2 of
             Tyvar         _ => printy t2 |
-            Tycon (_ , nil) => printy t2 |        
+            Tycon (_ , nil) => printy t2 |
             Tybool          => printy t2 |
             Tyunit          => printy t2 |
             Absurd          => printy t2 |
                           _ => ( out "(" ; printy t2 ; out ")" )
-         
+
        )
   | printy ( Tyun (t1 , t2) ) =
        ( case derefer t1 of
@@ -166,16 +166,16 @@ fun printy ( Tyvar ( ref (Label n) ) ) =
          out " + ";
          case derefer t2 of
             Tyvar         _ => printy t2 |
-            Tycon (_ , nil) => printy t2 |        
+            Tycon (_ , nil) => printy t2 |
             Tybool          => printy t2 |
             Tyunit          => printy t2 |
             Absurd          => printy t2 |
             Typair        _ => printy t2 |
                           _ => ( out "(" ; printy t2 ; out ")" )
-         
+
        );
 
 fun printype t = ( numtyvar t 0 ; printy t ; eratyvar t );
-        
+
 (* end of TYPEX.SML **************************************************)
 

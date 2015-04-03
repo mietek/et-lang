@@ -20,8 +20,8 @@
 val splitconty =
   let
     fun f acc ( Tyfun (t1 , t2) ) = f (acc @ [t1]) t2
-      | f acc _ = acc;              
-  in  
+      | f acc _ = acc;
+  in
     f nil
   end;
 
@@ -42,7 +42,7 @@ fun substy isoldty newty t =
          t => t;
 
 fun genelim newt contys elim result =
-   let               
+   let
       val V = if elim then Typair (newt , result) else result;
 
       fun f (t::ts) = Tyfun (substy (fn t => t = newt) V t , f ts)

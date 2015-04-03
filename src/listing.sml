@@ -19,7 +19,7 @@
 (*       contprompt   = ? : string                                   *)
 (*                                                                   *)
 (*********************************************************************)
-                                                                       
+
 type character  = string;
 
 val prompt      = "+ ";
@@ -28,7 +28,7 @@ val contprompt  = "= ";
 local
    val greeting = "\n\n   THE INFERENTIAL PROGRAMMING LANGUAGE " ^
                   "INTERPRETER  " ^ ipll_ver ^ "\n" ^
-                  "               (c) Technical University of " ^ 
+                  "               (c) Technical University of " ^
                   "Wroclaw, 1992, 1993\n\n";
    val goodbye  = "IPL exit - returning to SML\n\n";
    val stream   = ref std_out;
@@ -36,7 +36,7 @@ local
    val newline  = ref false;
    val copying  = ref true;
    fun write s  = output (! stream , s);
-in                        
+in
    fun start_output name =
       ( is_std := name = "";
         if ! is_std
@@ -50,7 +50,7 @@ in
         if ! is_std
            then ()
            else ( close_out (! stream) ; stream := std_out )
-      );                 
+      );
 
    fun copy console (ch : character) =
       if console
@@ -61,15 +61,15 @@ in
                        else ()
                else ( if ch = "\n"
                          then write prompt
-                         else (); 
+                         else ();
                       copying := true;
                       newline := true
                     )
          else
             if ! copying
-               then ( if ! newline 
+               then ( if ! newline
                          then ( newline := false ; write contprompt )
-                         else ();     
+                         else ();
                       write ch;
                       if ch = "\n"
                          then newline := true
@@ -83,10 +83,10 @@ in
                          else write ch
                     );
 
-   fun out str = 
+   fun out str =
       ( (* if ! copying
            then write "\n"
-           else (); *) 
+           else (); *)
         copying := false;
         newline := true;
         write str

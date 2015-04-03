@@ -26,22 +26,22 @@
 (*       con Type_expected = - : exn                                 *)
 (*                                                                   *)
 (*********************************************************************)
-   
+
 exception Type_expected;
-                                     
-fun gettype param env newt newtid = 
-  let               
+
+fun gettype param env newt newtid =
+  let
     fun gettycon str =
       if str = newtid
         then ( nextsym() ; checktypar param ; newt )
-        else let 
+        else let
                val t as ref (Type {varlist=vl,...}) = find_ty str env;
-             in                                                    
+             in
                nextsym();
                Tycon (t , iter (fn para => para @
                  [gettype param env newt newtid]) nil (length vl))
              end;
-  
+
     fun atomic () =
       case getsym() of
         Ident' str     => ( nextsym() ; Tyvar (findtypar str param) ) |
@@ -53,7 +53,7 @@ fun gettype param env newt newtid =
         Left_brace     => ( nextsym();
                             let
                               val t = gettype param env newt newtid;
-                            in          
+                            in
                               if getsym() = Right_brace
                                 then ( nextsym() ; t )
                                 else raise Right_brace_expected
@@ -78,7 +78,7 @@ fun gettype param env newt newtid =
       in
         f ( typair() )
       end;
-  in                                   
+  in
     if getsym() = Thinarrow
       then ( nextsym() ; Tyfun (ty , gettype param env newt newtid) )
       else ty

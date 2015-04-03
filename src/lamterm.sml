@@ -22,7 +22,7 @@
 (*                                                                   *)
 (*********************************************************************)
 
-fun nest n = 
+fun nest n =
    let
       fun f l (Parameter k) = Parameter (if k >= l then k+n else k)
         | f l (Lambda t) = Lambda ( f (succ l) t )
@@ -41,7 +41,7 @@ local
      | f p l (Lambda t) = f p (succ l) t
      | f p l (Application (t1,t2)) = f p l t1 orelse f p l t2
      | f p l (Conditional (t1,t2,t3)) = f p l t1 orelse f p l t2 orelse
-                                        f p l t3 
+                                        f p l t3
      | f p l (Equality (t1,t2)) = f p l t1 orelse f p l t2
      | f p l (Pair (t1,t2)) = f p l t1 orelse f p l t2
      | f _ _ _ = false;
@@ -60,10 +60,10 @@ fun printerm level (Parameter n) = out ( chr (z-level+n+1) )
        out ("_" ^ id ^ (if ct then "cr" else "rec"))
   | printerm level (trm as Lambda _) =
        ( out "fn";
-         let 
-            fun param (l , Lambda t) = 
+         let
+            fun param (l , Lambda t) =
                    ( out ( " " ^ chr (z-l) ) ; param (succ l , t) )
-              | param arg = arg;                                 
+              | param arg = arg;
             val (l , t) = param (level , trm);
          in
             out " => " ; printerm l t
@@ -81,8 +81,8 @@ fun printerm level (Parameter n) = out ( chr (z-level+n+1) )
             Conditional _ => (out"(" ; printerm level rand ; out")") |
             Equality    _ => (out"(" ; printerm level rand ; out")") |
             Pair        _ => (out"(" ; printerm level rand ; out")") |
-                        _ => printerm level rand 
-       )                      
+                        _ => printerm level rand
+       )
   | printerm   _   True  = out "True"
   | printerm   _   False = out "False"
   | printerm   _   Inl   = out "Inl"
