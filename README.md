@@ -14,8 +14,8 @@ Includes all available literature.
 
 * 1988, Z. Spławski, “Teoriodowodowe podejście do programów funkcyjnych i typów danych”
 * 1991, Z. Spławski, “Proof-theoretic approach to automatic synthesis of polymorphic programs”
-* 1993, Z. Spławski, [“IPL by Examples”](doc/pdf/1993-splawski-ipl-by-examples.pdf)
-* 1993, T. Wierzbicki, [“On the Implementation of IPL”](doc/pdf/1993-wierzbicki-on-the-implementation-of-ipl.pdf)
+* 1993, Z. Spławski, [“IPL by examples”](doc/pdf/1993-splawski-ipl-by-examples.pdf)
+* 1993, T. Wierzbicki, [“On the implementation of IPL”](doc/pdf/1993-wierzbicki-on-the-implementation-of-ipl.pdf)
 * 1993, Z. Spławski, “Proof-theoretic approach to inductive definitions in ML-like programming languages vs. second-order lambda calculus”
 * 1995, Z. Spławski, “Proving equalities in λ→ with positive (co-)inductive data types”
 * 1996, Z. Spławski, “Subtyping λ→ with positive (co-)inductive data types”
