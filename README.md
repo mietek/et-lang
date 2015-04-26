@@ -27,7 +27,7 @@ Includes all available literature.
 * 2002, Z. Spławski, [“Defining recursors by solving equations in second-order lambda calculus”](doc/pdf/2002-splawski-defining-recursors-by-solving-equations-in-second-order-lambda-calculus.pdf)
 
 
-#### Related work
+### Related work
 
 * [The Charity language](https://github.com/mietek/charity-language)
 * [Total functional programming](https://github.com/mietek/total-functional-programming)
