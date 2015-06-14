@@ -21,7 +21,7 @@ Includes all available literature.
 * 1993, Z. Spławski, “Proof-theoretic approach to inductive definitions in ML-like programming languages vs. second-order lambda calculus”
 * 1995, Z. Spławski, “Proving equalities in λ→ with positive (co-)inductive data types”
 * 1996, Z. Spławski, “Subtyping λ→ with positive (co-)inductive data types”
-* 1997, Z. Spławski, “Proving eqalities in second-order lambda calculus with inductive and recursive types”
+* 1997, Z. Spławski, “Proving equalities in second-order lambda calculus with inductive and recursive types”
 * 1998, M. Łach, [“Teoria typów z definicjami indukcyjnymi jako język programowania”](doc/pdf/1998-lach-teoria-typow-z-definicjami-indukcyjnymi-jako-jezyk-programowania.pdf)
 * 1998, Z. Spławski, “Continuations in λ→ with positive (co-)inductive data types”
 * 1999, Z. Spławski, “Interdefinability of positive coinductive types with corecursors”
