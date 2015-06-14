@@ -1,8 +1,8 @@
-Group 
+Group
   signature ET
   structure et
 is
   tools/sources.cm
   parser/sources.cm
   compiler/sources.cm
-  etMain.sml	
+  etMain.sml

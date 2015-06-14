@@ -31,10 +31,10 @@ fun Id x = x
        | consType             of FromParser.String * FromParser.etType list
        | types                of FromParser.etType list
        | datatypeDefinition
-           of FromParser.String * (FromParser.String list) * 
+           of FromParser.String * (FromParser.String list) *
                (FromParser.String * FromParser.etType list) list
        | typeConstructor      of FromParser.String * FromParser.String list
-       | constructorList   
+       | constructorList
            of (FromParser.String * FromParser.etType list) list
        | constructorEntry     of FromParser.String * FromParser.etType list
        | codatatypeDefinition
@@ -53,7 +53,7 @@ fun Id x = x
 %left Equals
 %left Colon
 %nonassoc DummyTerm1
-%nonassoc LowerIdent UpperIdent Iterator Recursor Number 
+%nonassoc LowerIdent UpperIdent Iterator Recursor Number
 %nonassoc Coiterator Corecursor LRParen LeftParen Let Fn If Then Else
 %nonassoc TypeVar LRBrace
 
@@ -69,7 +69,7 @@ fun Id x = x
 %%
 declaration:
            (FromParser.mkTermWithPos FromParser.Empty () defaultPos defaultPos)
- | valueBinding      (FromParser.mkTermWithPos FromParser.ValBind valueBinding 
+ | valueBinding      (FromParser.mkTermWithPos FromParser.ValBind valueBinding
                        valueBindingleft valueBindingright)
  | term      (FromParser.mkTermWithPos FromParser.Term term termleft termright)
  | datatypeDefinition   (FromParser.mkTermWithPos FromParser.DatatypeDef
@@ -77,24 +77,24 @@ declaration:
  | codatatypeDefinition (FromParser.mkTermWithPos FromParser.CodatatypeDef
       codatatypeDefinition codatatypeDefinitionleft codatatypeDefinitionright)
  | Exit   (FromParser.mkTermWithPos FromParser.Eof () defaultPos defaultPos )
- | Use Str  (FromParser.mkTermWithPos FromParser.Command ("use",Str) 
+ | Use Str  (FromParser.mkTermWithPos FromParser.Command ("use",Str)
 	     Useleft Strright)
- | Show	    (FromParser.mkTermWithPos FromParser.Command ("show","") 
+ | Show	    (FromParser.mkTermWithPos FromParser.Command ("show","")
 	     Showleft Showright)
- | Show	lowUpIdent (FromParser.mkTermWithPos FromParser.Command 
-		    ("show",(fn (a,_) => a) lowUpIdent) 
+ | Show	lowUpIdent (FromParser.mkTermWithPos FromParser.Command
+		    ("show",(fn (a,_) => a) lowUpIdent)
 	     Showleft lowUpIdentright)
- | Show	Star (FromParser.mkTermWithPos FromParser.Command 
+ | Show	Star (FromParser.mkTermWithPos FromParser.Command
 		    ("show","*") Showleft Starright)
- | Show	Plus (FromParser.mkTermWithPos FromParser.Command 
+ | Show	Plus (FromParser.mkTermWithPos FromParser.Command
 		    ("show","+") Showleft Plusright)
- | Show	LRBrace (FromParser.mkTermWithPos FromParser.Command 
+ | Show	LRBrace (FromParser.mkTermWithPos FromParser.Command
 		    ("show","{}") Showleft LRBraceright)
- | Norm term (FromParser.mkTermWithPos  FromParser.Norm term 
+ | Norm term (FromParser.mkTermWithPos  FromParser.Norm term
 	      Normleft termright)
 
 atomicTerm:
-   lowUpIdent            (FromParser.mkTermWithPos FromParser.Ident 
+   lowUpIdent            (FromParser.mkTermWithPos FromParser.Ident
                            (FromParser.getTerm lowUpIdent)
                              lowUpIdentleft lowUpIdentright )
  | Iterator              (FromParser.mkTermWithPos FromParser.Ident Iterator
@@ -113,16 +113,16 @@ atomicTerm:
  | Let valueBindings In term End (FromParser.mkTermWithPos FromParser.Let
                                    (valueBindings,term)
                                    Letleft Endright)
- | Fn parameters DArrow term     (FromParser.mkTermWithPos FromParser.Fn 
+ | Fn parameters DArrow term     (FromParser.mkTermWithPos FromParser.Fn
                                    (parameters,term)
                                    Fnleft termright)
  | If term Then term Else term   (
     let
-      fun mkapp t lpos rpos = FromParser.mkTermWithPos FromParser.App 
+      fun mkapp t lpos rpos = FromParser.mkTermWithPos FromParser.App
                                 t lpos rpos
     in
-      mkapp 	
-      (mkapp 
+      mkapp
+      (mkapp
       (mkapp (FromParser.mkTermWithPos FromParser.Ident "IF" Ifleft
                            Ifright,term1)
                          Ifleft term1right,term2)
@@ -137,26 +137,26 @@ parameters:
 
 term:
    atomicTerm                       (atomicTerm)
- | term atomicTerm %prec DummyTerm1 (FromParser.mkTermWithPos FromParser.App 
+ | term atomicTerm %prec DummyTerm1 (FromParser.mkTermWithPos FromParser.App
                                       (term,atomicTerm)
                                       termleft atomicTermright)
  | term Colon term      (
     let
-      fun mkapp t lpos rpos = FromParser.mkTermWithPos FromParser.App t 
+      fun mkapp t lpos rpos = FromParser.mkTermWithPos FromParser.App t
                                 lpos rpos
     in
-      mkapp 
-        (mkapp (FromParser.mkTermWithPos FromParser.Ident "," 
+      mkapp
+        (mkapp (FromParser.mkTermWithPos FromParser.Ident ","
                                            Colonleft Colonright,term1)
                          term1left Colonright,term2)
         term1left term2right
     end)
  | term Equals term         (
     let
-      fun mkapp t lpos rpos = FromParser.mkTermWithPos FromParser.App 
+      fun mkapp t lpos rpos = FromParser.mkTermWithPos FromParser.App
                                 t lpos rpos
     in
-      mkapp 
+      mkapp
       (mkapp (FromParser.mkTermWithPos FromParser.Ident "=" Equalsleft
                            Equalsright,term1)
                          term1left Equalsright,term2)
@@ -165,8 +165,8 @@ term:
 
 valueBinding:
    Val LowerIdent Equals term (
-     FromParser.mkTermWithPos FromParser.Val 
-       (FromParser.mkTermWithPos Id LowerIdent LowerIdentleft 
+     FromParser.mkTermWithPos FromParser.Val
+       (FromParser.mkTermWithPos Id LowerIdent LowerIdentleft
           LowerIdentright,term)
        Valleft termright)
 
@@ -180,8 +180,8 @@ type_: (*this should be "type", but "type" is keyword in SML*)
  | LeftParen type_ RightParen (type_)
  | consType  %prec DummyTerm1 (FromParser.mkTermWithPos FromParser.TypeApp
                                 consType consTypeleft consTyperight)
- | LRBrace           (FromParser.mkTermWithPos FromParser.TypeApp 
-                       (FromParser.mkTermWithPos Id "{}" LRBraceleft 
+ | LRBrace           (FromParser.mkTermWithPos FromParser.TypeApp
+                       (FromParser.mkTermWithPos Id "{}" LRBraceleft
                          LRBraceright,nil) LRBraceleft LRBraceright)
  | type_ Star type_  (FromParser.mkTermWithPos FromParser.TypeApp
                        (FromParser.mkTermWithPos Id "*" Starleft Starright,
@@ -197,27 +197,27 @@ typeInCons:
    TypeVar           (FromParser.mkTermWithPos FromParser.TypeVar TypeVar
                                  TypeVarleft TypeVarright)
  | LeftParen type_ RightParen  (type_)
- | lowUpIdent       (FromParser.mkTermWithPos FromParser.TypeApp 
+ | lowUpIdent       (FromParser.mkTermWithPos FromParser.TypeApp
                      (lowUpIdent,nil) lowUpIdentleft lowUpIdentright)
- | LRBrace          (FromParser.mkTermWithPos FromParser.TypeApp 
+ | LRBrace          (FromParser.mkTermWithPos FromParser.TypeApp
                      (FromParser.mkTermWithPos Id "{}" LRBraceleft LRBraceright
                         ,nil) LRBraceleft LRBraceright)
- | typeInCons Star typeInCons  
+ | typeInCons Star typeInCons
             (FromParser.mkTermWithPos FromParser.TypeApp
               (FromParser.mkTermWithPos Id "*" Starleft Starright,
                 [typeInCons1,typeInCons2]) typeInCons1left typeInCons2right)
- | typeInCons Plus typeInCons  
+ | typeInCons Plus typeInCons
             (FromParser.mkTermWithPos FromParser.TypeApp
               (FromParser.mkTermWithPos Id "+" Plusleft Plusright,
                 [typeInCons1,typeInCons2]) typeInCons1left typeInCons2right)
- | typeInCons Arrow typeInCons 
+ | typeInCons Arrow typeInCons
             (FromParser.mkTermWithPos FromParser.TypeApp
               (FromParser.mkTermWithPos Id "->" Arrowleft Arrowright,
                 [typeInCons1,typeInCons2]) typeInCons1left typeInCons2right)
 
 consType:
    lowUpIdent                   ((lowUpIdent,nil))
- | consType typeInCons %prec DummyTerm2 
+ | consType typeInCons %prec DummyTerm2
                                 ((fn (a,b) => (a,b@[typeInCons])) consType)
 
 types:
@@ -226,13 +226,13 @@ types:
 
 datatypeDefinition:
    Datatype typeConstructor Equals ((fn (a,b) => (a,b,nil)) typeConstructor)
- | Datatype typeConstructor Equals constructorList 
+ | Datatype typeConstructor Equals constructorList
              ((fn (a,b) => fn c => (a,b,c)) typeConstructor constructorList)
 
 typeConstructor:
    lowUpIdent              ((lowUpIdent,nil))
  | typeConstructor TypeVar (
-    (fn (a,b) => 
+    (fn (a,b) =>
        (a,b@[FromParser.mkTermWithPos Id TypeVar TypeVarleft TypeVarright]))
      typeConstructor)
 
@@ -248,7 +248,7 @@ constructorEntry:
 
 codatatypeDefinition:
    Codatatype typeConstructor Equals ((fn (a,b) => (a,b,nil)) typeConstructor)
- | Codatatype typeConstructor Equals destructorList 
+ | Codatatype typeConstructor Equals destructorList
                ((fn (a,b) => fn c => (a,b,c)) typeConstructor destructorList)
 
 destructorList:

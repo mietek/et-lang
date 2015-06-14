@@ -1,8 +1,7 @@
-(* przyk³ad 7 *)
-val add1 = fn m => _NATit m (fn x y => Suc (x y)) (fn n => n); 
+(* przykÅ‚ad 7 *)
+val add1 = fn m => _NATit m (fn x y => Suc (x y)) (fn n => n);
 
 val prz = fn x n => Suc (x n);
 
 fn m => add (Suc m) = prz (add m);
 fn m => add1 (Suc m) = prz (add1 m);
-

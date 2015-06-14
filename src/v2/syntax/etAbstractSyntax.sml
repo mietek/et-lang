@@ -6,16 +6,16 @@ sig
   datatype etType =
     TypeVar of TypeNumberId
   | TypeApp of TypeNumberId * etType list
-    
+
   datatype etTerm =
     Var of TermNumberId
   | BoundVar of int
   | App of etTerm * etTerm
   | Abs of string * etTerm
   | Cons of string * TypeNumberId * int * int * etTerm * etTerm * (etTerm list)
-  | Iter of string * TypeNumberId * int 
-  | Rec  of string * TypeNumberId * int 
-  | Des  of string * TypeNumberId * int * etTerm * etTerm 
+  | Iter of string * TypeNumberId * int
+  | Rec  of string * TypeNumberId * int
+  | Des  of string * TypeNumberId * int * etTerm * etTerm
   | Coit of string * TypeNumberId * int * (etTerm list)
   | Corec of string * TypeNumberId * int * (etTerm list)
 
@@ -33,20 +33,20 @@ structure etAbstractSyntax : etABSTRACTSYNTAX =
 struct
   type TypeNumberId = int
   type TermNumberId = int
-    
+
   datatype etType =
     TypeVar of TypeNumberId
   | TypeApp of TypeNumberId * etType list
-    
+
   datatype etTerm =
     Var of TermNumberId
   | BoundVar of int
   | App of etTerm * etTerm
   | Abs of string * etTerm
   | Cons of string * TypeNumberId * int * int * etTerm * etTerm * (etTerm list)
-  | Iter of string * TypeNumberId * int 
-  | Rec  of string * TypeNumberId * int 
-  | Des  of string * TypeNumberId * int * etTerm * etTerm 
+  | Iter of string * TypeNumberId * int
+  | Rec  of string * TypeNumberId * int
+  | Des  of string * TypeNumberId * int * etTerm * etTerm
   | Coit of string * TypeNumberId * int * (etTerm list)
   | Corec of string * TypeNumberId * int * (etTerm list)
 
@@ -73,7 +73,7 @@ local
   fun uniq (h::t) = h::(List.filter (fn x => x<>h) t)
     | uniq nil    = nil
 in
-  fun allTypeVarIn t = uniq (alltv t) 
+  fun allTypeVarIn t = uniq (alltv t)
 end
 
 fun notTypeVarIn (TypeVar i)        (TypeVar j)     = i<>j
@@ -81,6 +81,6 @@ fun notTypeVarIn (TypeVar i)        (TypeVar j)     = i<>j
       notTypeVarInL tv1 tl
   | notTypeVarIn  _                  _              = false
 and notTypeVarInL (tv1 as TypeVar _) tl =
-      List.all (fn x => notTypeVarIn tv1 x) tl 
+      List.all (fn x => notTypeVarIn tv1 x) tl
   | notTypeVarInL  _                 _  = false
 end

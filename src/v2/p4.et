@@ -1,7 +1,7 @@
-(* przyk³ad 4*)
+(* przykÅ‚ad 4*)
 datatype LIST 'a = Cons from 'a LIST 'a | Nil;
 
 val append = fn list => _LISTit list Cons;
 
-val map = 
+val map =
       fn fun list => _LISTit list (fn head tail => Cons (fun head) tail) Nil;

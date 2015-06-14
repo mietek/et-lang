@@ -12,11 +12,11 @@ sig
                              -> int -> string
   val valNoTermToString  : Env.Env -> (string * AbsSyn.etTerm * AbsSyn.etType)
                              -> int -> string
-  val dataToString  : Env.Env -> 
+  val dataToString  : Env.Env ->
     ((AbsSyn.etTerm * AbsSyn.etType)*(AbsSyn.etTerm * AbsSyn.etType)*
      ((AbsSyn.etTerm * AbsSyn.etType) list)) -> int -> string
 
-  val codataToString  : Env.Env -> 
+  val codataToString  : Env.Env ->
     ((AbsSyn.etTerm * AbsSyn.etType)*(AbsSyn.etTerm * AbsSyn.etType)*
      ((AbsSyn.etTerm * AbsSyn.etType) list)) -> int -> string
 end
@@ -42,7 +42,7 @@ fun joinAbs l (AbsSyn.Abs (s,t)) = joinAbs (l@[s]) t
 fun joinApp (AbsSyn.App (t1,t2)) = (joinApp t1)@[t2]
   | joinApp t                    = [t]
 
-fun getNewName env bound num = 
+fun getNewName env bound num =
   let
     val  newName ="'" ^ (str (chr (97+ num)))
   in
@@ -57,14 +57,14 @@ fun getNewName env bound num =
 fun getTypeName env bound i = (Env.getTypeNameFromNumber env i,bound)
                               handle Env.NotFoundInEnv =>
                                 case (List.find (fn (n,_) => n=i) bound)
-                                  of NONE => 
+                                  of NONE =>
                                     let
                                       val newName = getNewName env bound 0
                                     in
                                         (newName,(i,newName)::bound)
                                     end
                                   | SOME (_,name) => (name,bound)
-                                  
+
 fun pType env bound pps (AbsSyn.TypeVar i) =
   let
     val (typeName,bound) = getTypeName env bound i
@@ -74,14 +74,14 @@ fun pType env bound pps (AbsSyn.TypeVar i) =
   end
   | pType env bound pps (AbsSyn.TypeApp (i,typelist)) =
   let
-    val ifTypeApp =  (fn (AbsSyn.TypeApp (_,h::tl)) => true | _ => false) 
+    val ifTypeApp =  (fn (AbsSyn.TypeApp (_,h::tl)) => true | _ => false)
     val (typeName,bound) = getTypeName env bound i
   in
     if Char.isAlpha(String.sub(typeName,0)) then
      (PrettyPrint.begin_block pps PrettyPrint.INCONSISTENT 2;
       PrettyPrint.add_string pps typeName;
       let
-        val bound = List.foldl (fn (s,boundd) => 
+        val bound = List.foldl (fn (s,boundd) =>
                (PrettyPrint.add_break pps (1,0);
                 if (ifTypeApp s) then PrettyPrint.add_string pps "(" else ();
                 let val boundd = pType env boundd pps s in
@@ -99,10 +99,10 @@ fun pType env bound pps (AbsSyn.TypeVar i) =
          val bound = if length typelist >=1 then
             let
               val firstType = List.nth (typelist,0)
-              val _ = if (ifTypeApp firstType) then 
+              val _ = if (ifTypeApp firstType) then
                 PrettyPrint.add_string pps "(" else ()
               val bound = pType env bound pps firstType
-              val _ = if (ifTypeApp firstType) then 
+              val _ = if (ifTypeApp firstType) then
                     PrettyPrint.add_string pps ")" else ()
               val _ = PrettyPrint.add_break pps (1,0)
             in
@@ -110,14 +110,14 @@ fun pType env bound pps (AbsSyn.TypeVar i) =
             end
           else bound
           val _ = PrettyPrint.add_string pps typeName
-          val bound = 
+          val bound =
             if length typelist >=1 then
               let
                 val allButFirstTypes = List.drop(typelist,1)
-                val ifArrows = typeName = "->" 
+                val ifArrows = typeName = "->"
                                andalso ((fn (AbsSyn.TypeApp (j,_)::_) => i=j
                                          | _ => false) allButFirstTypes)
-                val bound = List.foldl (fn (s,boundd) => 
+                val bound = List.foldl (fn (s,boundd) =>
                 (PrettyPrint.add_break pps (1,0);
                 if (ifTypeApp s) andalso (not ifArrows)
                   then PrettyPrint.add_string pps "(" else ();
@@ -137,15 +137,15 @@ fun pType env bound pps (AbsSyn.TypeVar i) =
         end)
   end
 
-fun pTerm env bound pps (AbsSyn.Var i) = 
+fun pTerm env bound pps (AbsSyn.Var i) =
     let
 	val name =  (Env.getTermNameFromNumber env i)
-	val s = if List.exists (fn a => a=name) bound 
+	val s = if List.exists (fn a => a=name) bound
 		    then name^"[env]" else name
     in
       PrettyPrint.add_string pps s
     end
-  | pTerm env bound pps (AbsSyn.BoundVar i) = 
+  | pTerm env bound pps (AbsSyn.BoundVar i) =
     let
 	val name = List.nth (bound,i)
 	val noflam = (List.length (List.filter (fn a => a=name)
@@ -163,21 +163,21 @@ fun pTerm env bound pps (AbsSyn.Var i) =
                          | (AbsSyn.Cons (_,_,_,_,_,_,h::tl)) => true
                          | (AbsSyn.Coit (_,_,_,h::tl)) => true
                          | (AbsSyn.Corec (_,_,_,h::tl)) => true
-                         | _ => false) 
-          val ifAbsOrApp =  (fn (AbsSyn.App _) => true 
-                              | (AbsSyn.Abs _) => true 
+                         | _ => false)
+          val ifAbsOrApp =  (fn (AbsSyn.App _) => true
+                              | (AbsSyn.Abs _) => true
                               | (AbsSyn.Cons (_,_,_,_,_,_,h::tl)) => true
                               | (AbsSyn.Coit (_,_,_,h::tl)) => true
                               | (AbsSyn.Corec (_,_,_,h::tl)) => true
                               |  _             => false)
       in
-        if (length tlist>1) andalso (ifCons ((fn (AbsSyn.Var i) => 
+        if (length tlist>1) andalso (ifCons ((fn (AbsSyn.Var i) =>
                               (fn (a,b) => a) (Env.getTermFromNumber env i)
                                | a => a) (hd tlist) ))
           then pTerm env bound pps (Eval.toHeadNormalForm env t)
         else
           (PrettyPrint.begin_block pps PrettyPrint.INCONSISTENT 2;
-          List.foldl (fn (s,_) => 
+          List.foldl (fn (s,_) =>
              (if (ifAbsOrApp s) then PrettyPrint.add_string pps "(" else ();
               pTerm env bound pps s;
               if (ifAbsOrApp s) then PrettyPrint.add_string pps ")" else ();
@@ -207,10 +207,10 @@ fun pTerm env bound pps (AbsSyn.Var i) =
           PrettyPrint.end_block pps;
           PrettyPrint.end_block pps
        end
-  | pTerm env bound pps (t as AbsSyn.Cons ("Suc",40,1,1,_,_,tl)) = 
+  | pTerm env bound pps (t as AbsSyn.Cons ("Suc",40,1,1,_,_,tl)) =
       let
-          val ifAbsOrApp =  (fn (AbsSyn.App _) => true 
-                              | (AbsSyn.Abs _) => true 
+          val ifAbsOrApp =  (fn (AbsSyn.App _) => true
+                              | (AbsSyn.Abs _) => true
                               | (AbsSyn.Cons _) => true
                               | (AbsSyn.Iter _) => true
                               | (AbsSyn.Des _) => true
@@ -219,19 +219,19 @@ fun pTerm env bound pps (AbsSyn.Var i) =
                               |  _             => false)
           val izero  = IntInf.fromInt 0;
           val ijeden = IntInf.fromInt 1;
-          fun ifOnlyNat (AbsSyn.Cons ("Suc",40,1,_,_,_,[tl])) = 
+          fun ifOnlyNat (AbsSyn.Cons ("Suc",40,1,_,_,_,[tl])) =
                          (fn (a,b) => (a,IntInf.+ (b,ijeden))) (ifOnlyNat tl)
-            | ifOnlyNat (AbsSyn.Cons ("0",40,2,_,_,_,[])) = 
-                         (true,izero) 
-            | ifOnlyNat _ = (false,izero) 
-          val (ifNum,BigNum) = ifOnlyNat t 
+            | ifOnlyNat (AbsSyn.Cons ("0",40,2,_,_,_,[])) =
+                         (true,izero)
+            | ifOnlyNat _ = (false,izero)
+          val (ifNum,BigNum) = ifOnlyNat t
       in
         if ifNum then
           PrettyPrint.add_string pps (IntInf.toString BigNum)
         else(
         PrettyPrint.begin_block pps PrettyPrint.INCONSISTENT 2;
         PrettyPrint.add_string pps "Suc";
-        List.foldl (fn (s,_) => 
+        List.foldl (fn (s,_) =>
           (PrettyPrint.add_break pps (1,0);
            if (ifAbsOrApp s) then PrettyPrint.add_string pps "(" else ();
              pTerm env bound pps s;
@@ -239,10 +239,10 @@ fun pTerm env bound pps (AbsSyn.Var i) =
         () tl;
         PrettyPrint.end_block pps)
       end
-  | pTerm env bound pps (t as AbsSyn.Cons (s,_,_,_,_,_,tl)) = 
+  | pTerm env bound pps (t as AbsSyn.Cons (s,_,_,_,_,_,tl)) =
       let
-          val ifAbsOrApp =  (fn (AbsSyn.App _) => true 
-                              | (AbsSyn.Abs _) => true 
+          val ifAbsOrApp =  (fn (AbsSyn.App _) => true
+                              | (AbsSyn.Abs _) => true
                               | (AbsSyn.Cons (_,_,_,_,_,_,h::tl)) => true
                               | (AbsSyn.Coit (_,_,_,h::tl)) => true
                               | (AbsSyn.Corec (_,_,_,h::tl)) => true
@@ -251,7 +251,7 @@ fun pTerm env bound pps (AbsSyn.Var i) =
         PrettyPrint.begin_block pps PrettyPrint.INCONSISTENT 2;
         if Char.isAlpha(String.sub(s,0)) orelse (length tl <2) then
         (PrettyPrint.add_string pps s;
-        List.foldl (fn (s,_) => 
+        List.foldl (fn (s,_) =>
           (PrettyPrint.add_break pps (1,0);
            if (ifAbsOrApp s) then PrettyPrint.add_string pps "(" else ();
              pTerm env bound pps s;
@@ -261,7 +261,7 @@ fun pTerm env bound pps (AbsSyn.Var i) =
         (pTerm env bound pps (hd tl);
          PrettyPrint.add_break pps (1,0);
          PrettyPrint.add_string pps s;
-         List.foldl (fn (s,_) => 
+         List.foldl (fn (s,_) =>
           (PrettyPrint.add_break pps (1,0);
            if (ifAbsOrApp s) then PrettyPrint.add_string pps "(" else ();
              pTerm env bound pps s;
@@ -271,12 +271,12 @@ fun pTerm env bound pps (AbsSyn.Var i) =
       end
   | pTerm env bound pps (AbsSyn.Iter (s,_,_)) = PrettyPrint.add_string pps s
   | pTerm env bound pps (AbsSyn.Rec  (s,_,_)) = PrettyPrint.add_string pps s
-  | pTerm env bound pps (AbsSyn.Des  (s,_,_,_,_)) = 
+  | pTerm env bound pps (AbsSyn.Des  (s,_,_,_,_)) =
       PrettyPrint.add_string pps s
-  | pTerm env bound pps (t as AbsSyn.Coit (s,_,_,tl)) = 
+  | pTerm env bound pps (t as AbsSyn.Coit (s,_,_,tl)) =
       let
-          val ifAbsOrApp =  (fn (AbsSyn.App _) => true 
-                              | (AbsSyn.Abs _) => true 
+          val ifAbsOrApp =  (fn (AbsSyn.App _) => true
+                              | (AbsSyn.Abs _) => true
                               | (AbsSyn.Cons (_,_,_,_,_,_,h::tl)) => true
                               | (AbsSyn.Coit (_,_,_,h::tl)) => true
                               | (AbsSyn.Corec (_,_,_,h::tl)) => true
@@ -284,7 +284,7 @@ fun pTerm env bound pps (AbsSyn.Var i) =
       in
         PrettyPrint.begin_block pps PrettyPrint.INCONSISTENT 2;
         PrettyPrint.add_string pps s;
-        List.foldl (fn (s,_) => 
+        List.foldl (fn (s,_) =>
           (PrettyPrint.add_break pps (1,0);
            if (ifAbsOrApp s) then PrettyPrint.add_string pps "(" else ();
              pTerm env bound pps s;
@@ -292,10 +292,10 @@ fun pTerm env bound pps (AbsSyn.Var i) =
         () tl;
         PrettyPrint.end_block pps
       end
-  | pTerm env bound pps (t as AbsSyn.Corec (s,_,_,tl)) = 
+  | pTerm env bound pps (t as AbsSyn.Corec (s,_,_,tl)) =
       let
-          val ifAbsOrApp =  (fn (AbsSyn.App _) => true 
-                              | (AbsSyn.Abs _) => true 
+          val ifAbsOrApp =  (fn (AbsSyn.App _) => true
+                              | (AbsSyn.Abs _) => true
                               | (AbsSyn.Cons (_,_,_,_,_,_,h::tl)) => true
                               | (AbsSyn.Coit (_,_,_,h::tl)) => true
                               | (AbsSyn.Corec (_,_,_,h::tl)) => true
@@ -303,7 +303,7 @@ fun pTerm env bound pps (AbsSyn.Var i) =
       in
         PrettyPrint.begin_block pps PrettyPrint.INCONSISTENT 2;
         PrettyPrint.add_string pps s;
-        List.foldl (fn (s,_) => 
+        List.foldl (fn (s,_) =>
           (PrettyPrint.add_break pps (1,0);
            if (ifAbsOrApp s) then PrettyPrint.add_string pps "(" else ();
              pTerm env bound pps s;
@@ -362,7 +362,7 @@ fun printData env pps (iter,recc,cl) =
       (PrettyPrint.begin_block pps PrettyPrint.INCONSISTENT 0;
        foldl (fn ((AbsSyn.Cons (name,_,_,_,t1,t2,_),typ),tb) =>
               (let
-                   val tb = 
+                   val tb =
                (PrettyPrint.add_string pps "con";
                PrettyPrint.add_break pps (1,0);
                PrettyPrint.add_string pps name;
@@ -392,10 +392,10 @@ fun printData env pps (iter,recc,cl) =
       foldl (fn ((AbsSyn.Cons (name,a,b,narg,t,c,[]),typ),_) =>
               let
                 val (arglist,listnames) = ListPair.unzip
-                  (List.tabulate (narg,fn n => 
+                  (List.tabulate (narg,fn n =>
                                  (AbsSyn.BoundVar (n),
                                   "u"^(Int.toString (n+1)))))
-                val ittocons = AbsSyn.App 
+                val ittocons = AbsSyn.App
                ((fn (a,_) =>a) iter,AbsSyn.Cons (name,a,b,narg,t,c,arglist))
               in
                PrettyPrint.add_string pps "comp";
@@ -409,7 +409,7 @@ fun printData env pps (iter,recc,cl) =
               end
                | _ => ()) () cl;
       if List.all (fn (AbsSyn.Cons (_,_,_,_,t1,t2,_),_) => t1=t2
-                       | _  => true) cl then 
+                       | _  => true) cl then
           (PrettyPrint.add_string pps ("rec "^rcName^" = "^itName);
            PrettyPrint.add_newline pps)
       else(
@@ -426,10 +426,10 @@ fun printData env pps (iter,recc,cl) =
        foldl (fn ((AbsSyn.Cons (name,a,b,narg,c,t,[]),typ),_) =>
               (let
                 val (arglist,listnames) = ListPair.unzip
-                  (List.tabulate (narg,fn n => 
+                  (List.tabulate (narg,fn n =>
                                  (AbsSyn.BoundVar (n),
                                   "u"^(Int.toString (n+1)))))
-                val ittocons = AbsSyn.App 
+                val ittocons = AbsSyn.App
                ((fn (a,_) =>a) recc,AbsSyn.Cons (name,a,b,narg,c,t,arglist))
               in
                PrettyPrint.add_string pps "comp";
@@ -448,7 +448,7 @@ fun printData env pps (iter,recc,cl) =
 
 fun printCoData env pps (coit,corec,dl) =
       (let val numDes = (fn (AbsSyn.Coit (_,_,n,_),_) =>n | _ => 0) coit;
-           val mkCoit = fn l => (fn (AbsSyn.Coit (a,b,n,_),_) => 
+           val mkCoit = fn l => (fn (AbsSyn.Coit (a,b,n,_),_) =>
                                   AbsSyn.Coit (a,b,n,l)
                                   | (AbsSyn.Corec (a,b,n,_),_) =>
                                   AbsSyn.Corec (a,b,n,l)
@@ -470,7 +470,7 @@ fun printCoData env pps (coit,corec,dl) =
                PrettyPrint.add_newline pps;tb
 	      end
                | _ => []) [] dl)
-       val typebound = 
+       val typebound =
        (fn (AbsSyn.Coit (name,_,_,_),typ) =>
 	  let val tb =
           (PrettyPrint.add_string pps "coiter";
@@ -488,11 +488,11 @@ fun printCoData env pps (coit,corec,dl) =
        foldl (fn ((d as AbsSyn.Des (name,a,b,t,c),typ),_) =>
               let
                 val (arglist,listnames) = (ListPair.unzip
-                  ((List.tabulate (numDes,fn n => 
+                  ((List.tabulate (numDes,fn n =>
                                  (AbsSyn.BoundVar (n),
                                   "v"^(Int.toString (n+1)))))@
                    [(AbsSyn.BoundVar numDes,"u")]))
-                val destocoit = AbsSyn.App 
+                val destocoit = AbsSyn.App
                (d,mkCoit arglist coit)
               in
                PrettyPrint.add_string pps "comp";
@@ -507,7 +507,7 @@ fun printCoData env pps (coit,corec,dl) =
               end
                | _ => ()) () dl;
       if List.all (fn (AbsSyn.Des (_,_,_,t1,t2),_) => t1=t2
-                       | _  => true) dl then 
+                       | _  => true) dl then
           (PrettyPrint.add_string pps ("corec "^corcName^" = "^coitName);
            PrettyPrint.add_newline pps)
       else(
@@ -524,11 +524,11 @@ fun printCoData env pps (coit,corec,dl) =
        foldl (fn ((d as AbsSyn.Des (name,a,b,t,c),typ),_) =>
               let
                 val (arglist,listnames) = (ListPair.unzip
-                  ((List.tabulate (numDes,fn n => 
+                  ((List.tabulate (numDes,fn n =>
                                  (AbsSyn.BoundVar (n),
                                   "v"^(Int.toString (n+1)))))@
                    [(AbsSyn.BoundVar numDes,"u")]))
-                val destocoit = AbsSyn.App 
+                val destocoit = AbsSyn.App
                (d,mkCoit arglist corec)
               in
                PrettyPrint.add_string pps "comp";
@@ -557,10 +557,8 @@ fun dataToString  env d i = ppToString i (printData env) d
 fun codataToString  env d i = ppToString i (printCoData env) d
 end
 
-structure etPrettyPrint = etPrettyPrintFun 
+structure etPrettyPrint = etPrettyPrintFun
                          (structure AbsSyn = etAbstractSyntax
                           structure Env = etEnvironment
                           structure Eval = etEval
                           structure PrettyPrint =  Compiler.PrettyPrint)
-
-

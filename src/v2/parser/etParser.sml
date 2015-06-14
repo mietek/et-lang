@@ -5,7 +5,7 @@ structure FromParser : etFROMPARSER
 type LexerType
 
 val makeLexer : (int -> string) -> (bool -> unit) -> LexerType
-val parse : LexerType -> FromParser.Position.Position -> 
+val parse : LexerType -> FromParser.Position.Position ->
    (FromParser.etDeclaration * LexerType * FromParser.Position.Position)
 end
 
@@ -38,8 +38,8 @@ val currPos = ref FromParser.Position.startPos
 val duringParsing  = ref true
 
 val invoke = fn lexstream =>
-    let 
-        val errorInParsing = fn (s,lPos,rPos) => 
+    let
+        val errorInParsing = fn (s,lPos,rPos) =>
                         raise etParseError (s,FromParser.mkLRPos lPos rPos)
     in
       etYacc.parse(0,lexstream,errorInParsing,())
@@ -53,15 +53,15 @@ fun makeLexer inputFun outputFun = etYacc.makeLexer
               inputFun i))
     (currPos,duringParsing);
 
-fun parse lexer pos = 
+fun parse lexer pos =
     let
         val _ = currPos:=pos;
         val _ = duringParsing:=false;
         val (nextToken,nextlexer)=etYacc.Stream.get lexer
     in
-        if etYacc.sameToken(nextToken,dummyEof) then 
+        if etYacc.sameToken(nextToken,dummyEof) then
             (FromParser.mkTermWithPos FromParser.Eof () pos pos,lexer,pos)
-        else 
+        else
 	    let
 		val (result,lexer) = invoke lexer
 		val (nextToken,lexer)=etYacc.Stream.get lexer
@@ -69,15 +69,15 @@ fun parse lexer pos =
 		if etYacc.sameToken(nextToken,dummySemicolon) then
 		    (result,lexer,!currPos)
 		else
-		    raise etParseError 
+		    raise etParseError
 			("syntax error, Semicolon expected",
 			 FromParser.mkLRPos (!currPos) (!currPos))
 	    end
     end
-    handle etParseError (s,lrpos) => 
-	    (FromParser.ParserError ("syntax error",lrpos),lexer,!currPos) 
-	 |  etLex.UserDeclarations.LexError (s,lpos,rpos) => 
-	    (FromParser.LexerError 
+    handle etParseError (s,lrpos) =>
+	    (FromParser.ParserError ("syntax error",lrpos),lexer,!currPos)
+	 |  etLex.UserDeclarations.LexError (s,lpos,rpos) =>
+	    (FromParser.LexerError
 	     ("unrecognized character: "^s,
 	      FromParser.mkLRPos (lpos) (rpos)),lexer,!currPos)
 end

@@ -1,56 +1,56 @@
-(* przyk³ad 1 *)
+(* przykÅ‚ad 1 *)
 val term = fn x y z => (fn v => x z v) (y z);
 
-(* przyk³ad 2 *)
+(* przykÅ‚ad 2 *)
 val proof = fn a => when a (fn x => Inl (fst x),Inl (snd x))
                            (fn y => Inr (fst y),Inr (snd y));
 
-(* przyk³ad 3 *)
+(* przykÅ‚ad 3 *)
 val ifZero = fn n a b => _NATit n (fn x =>b) a;
 
-val le = fn u => _NATit u (fn y v => ifZero v False (y (pred v))) 
-	                  (fn v => True);
+val le = fn u => _NATit u (fn y v => ifZero v False (y (pred v)))
+                          (fn v => True);
 
-(* przyk³ad 4*)
+(* przykÅ‚ad 4*)
 datatype LIST 'a = Cons from 'a LIST 'a | Nil;
 
 val append = fn list => _LISTit list Cons;
 
-val map = 
+val map =
       fn fun list => _LISTit list (fn head tail => Cons (fun head) tail) Nil;
 
-(* przyk³ad 5 *)
+(* przykÅ‚ad 5 *)
 codatatype STREAM 'a = Shd to 'a & Stl to STREAM 'a;
 
 val smap = fn fun str => _STREAMci (fn x=> fun (Shd x)) Stl str;
 
 val natstr = _STREAMci (fn x => x) Suc ;
 
-val getNth = fn stream number => Shd (_NATit number Stl stream); 
+val getNth = fn stream number => Shd (_NATit number Stl stream);
 
-(* przyk³ad 6 *)
+(* przykÅ‚ad 6 *)
 datatype TOWER = Source | Dest | Aux;
 
 val mkMove = fn from_ to_ => (from_,to_);
 
 val subTower = fn s d a tower => _TOWERit tower s d a;
 
-val appSubToList = fn sub list => _LISTit list 
+val appSubToList = fn sub list => _LISTit list
                     (fn m => Cons (mkMove (sub (fst m)) (sub (snd m)))) Nil;
 
-val hanoi = fn number => _NATit number 
+val hanoi = fn number => _NATit number
   (fn x => append (appSubToList (subTower Source Aux Dest) x)
-            (Cons (mkMove Source Dest)  
-	          (appSubToList (subTower Aux Dest Source) x))) Nil;
+            (Cons (mkMove Source Dest)
+                  (appSubToList (subTower Aux Dest Source) x))) Nil;
 
-val hanoiStream = _STREAMci (fn x => x) 
+val hanoiStream = _STREAMci (fn x => x)
   (fn x => append (appSubToList (subTower Source Aux Dest) x)
-            (Cons (mkMove Source Dest)  
-	          (appSubToList (subTower Aux Dest Source) x)))
+            (Cons (mkMove Source Dest)
+                  (appSubToList (subTower Aux Dest Source) x)))
   Nil;
 
-(* przyk³ad 7 *)
-val add1 = fn m => _NATit m (fn x y => Suc (x y)) (fn n => n); 
+(* przykÅ‚ad 7 *)
+val add1 = fn m => _NATit m (fn x y => Suc (x y)) (fn n => n);
 
 val prz = fn x n => Suc (x n);
 

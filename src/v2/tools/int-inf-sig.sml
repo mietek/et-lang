@@ -16,4 +16,3 @@ signature INT_INF =
     val log2 : int -> Int.int
 
   end (* signature INT_INF *)
-

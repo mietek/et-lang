@@ -1,4 +1,4 @@
-Group 
+Group
   signature INT_INF
   structure etTools
   structure IntInf

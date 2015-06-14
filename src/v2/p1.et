@@ -1,2 +1,2 @@
-(* przyk³ad 1 *)
+(* przykÅ‚ad 1 *)
 val term = fn x y z => (fn v => x z v) (y z);

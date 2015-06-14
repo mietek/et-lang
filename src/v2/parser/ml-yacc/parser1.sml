@@ -1,4 +1,4 @@
-(* ML-Yacc Parser Generator (c) 1989 Andrew W. Appel, David R. Tarditi 
+(* ML-Yacc Parser Generator (c) 1989 Andrew W. Appel, David R. Tarditi
  *
  * $Log: parser1.sml,v $
  * Revision 1.2  1997/09/10 18:34:22  jhr
@@ -9,7 +9,7 @@
 #
  * Revision 1.1.1.1  1996/01/31  16:01:42  george
  * Version 109
- * 
+ *
  *)
 
 (*  This file was modified by Marek Lach to make it work with SMLNJ 110.0.3 .
@@ -20,7 +20,7 @@
 
 (* drt (12/15/89) -- the functor should be used during development work,
    but it is wastes space in the release version.
-   
+
 functor ParserGen(structure LrTable : LR_TABLE
 		  structure Stream : STREAM) : LR_PARSER =
 *)
@@ -37,9 +37,9 @@ structure LrParser :> LR_PARSER =
 	    datatype ('a,'b) token = TOKEN of LrTable.term * ('a * 'b * 'b)
 	    val sameToken = fn (TOKEN (t,_),TOKEN(t',_)) => t=t'
 	end
-     
 
-     open LrTable 
+
+     open LrTable
      open Token
 
      val DEBUG = false
@@ -69,12 +69,12 @@ structure LrParser :> LR_PARSER =
 			    errtermvalue,showTerminal,
 			    error,terms,noShift},
 		      lookahead} =>
- let fun prAction(stack as (state, _) :: _, 
+ let fun prAction(stack as (state, _) :: _,
 		  next as (TOKEN (term,_),_), action) =
              (println "Parse: state stack:";
               printStack(stack, 0);
               print("       state="
-                         ^ showState state	
+                         ^ showState state
                          ^ " next="
                          ^ showTerminal term
                          ^ " action="
@@ -115,7 +115,7 @@ structure LrParser :> LR_PARSER =
 end;
 
 (* drt (12/15/89) -- this needs to be used only when the parsing engine
-  (the code above) is functorized.  
+  (the code above) is functorized.
 
 structure LrParser = ParserGen(structure LrTable = LrTable
 			     structure Stream = Stream);

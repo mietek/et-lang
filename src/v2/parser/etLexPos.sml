@@ -1,6 +1,6 @@
 signature etLEXPOSITION =
     sig
-	type Position 
+	type Position
 	val startPos : Position
 	val startPosFile : string -> Position
 	val newLine : Position -> Position
@@ -14,7 +14,7 @@ signature etLEXPOSITION =
 structure etLexPosition : etLEXPOSITION =
     struct
 	type Position = {file: string,line: int,column: int,textline:string}
-	    
+
 	val startPos = {file="",line=1,column=0,textline=""}
 	fun startPosFile name = {file=name,line=1,column=0,textline=""}
 	fun newLine (p:Position) = {file=(#file p),line=(#line p +1),
@@ -27,4 +27,3 @@ structure etLexPosition : etLEXPOSITION =
 	fun getColumn (p:Position) = (#column p)
 	fun getTextLine (p:Position) = (#textline p)
     end;
-    

@@ -1,10 +1,10 @@
 signature etUNIFIER =
 sig
   structure AbsSyn : etABSTRACTSYNTAX
-  
+
   structure Env : etENVIRONMENT
 
-  datatype DisPair = 
+  datatype DisPair =
     DPair of AbsSyn.etType * AbsSyn.etType | Pi
 
   type Substitution
@@ -13,7 +13,7 @@ sig
 
   val SId       : Substitution
   val addS      : Substitution -> AbsSyn.etType * AbsSyn.etType -> Substitution
-  val addLtoS   : Substitution -> 
+  val addLtoS   : Substitution ->
                     (AbsSyn.etType * AbsSyn.etType) list -> Substitution
   val addStoS   : Substitution -> Substitution -> Substitution
   val appS      : Substitution -> AbsSyn.etType -> AbsSyn.etType
@@ -56,11 +56,11 @@ fun addStoS sub l = List.foldr (fn (a,b) => addS b a) sub l
 exception Fail;
 
 local
-  fun D (z as (AbsSyn.TypeVar i1,AbsSyn.TypeVar i2)) = 
+  fun D (z as (AbsSyn.TypeVar i1,AbsSyn.TypeVar i2)) =
         if i1=i2 then Pi else DPair z
-    | D (z as (AbsSyn.TypeApp (i1,lt1),AbsSyn.TypeApp (i2,lt2))) = 
+    | D (z as (AbsSyn.TypeApp (i1,lt1),AbsSyn.TypeApp (i2,lt2))) =
         if (i1=i2) andalso (length lt1 = length lt2) then
-          D' (ListPair.zip (lt1,lt2)) 
+          D' (ListPair.zip (lt1,lt2))
         else DPair z
     | D p                                                 = DPair p
   and D' [t as (t1,t2)]          = D t
@@ -69,15 +69,15 @@ local
                                      if d = Pi then D'(tail) else d
                                    end
     | D' []                      = Pi
-           
-  fun U S (l as ((e,e')::t)) = 
-    let 
-      val se  = appS S e 
+
+  fun U S (l as ((e,e')::t)) =
+    let
+      val se  = appS S e
       val se' = appS S e'
     in
       if se = se' then U S t
-      else let 
-             val (u,v)=(fn DPair a => a 
+      else let
+             val (u,v)=(fn DPair a => a
                         | Pi => raise etTools.InternalError "Error in unifier")
                        (D (se,se'))
            in

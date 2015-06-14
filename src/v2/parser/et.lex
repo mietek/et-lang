@@ -2,7 +2,7 @@
 type pos = LexPosition.Position
 type svalue = Tokens.svalue
 type ('a,'b) token = ('a,'b) Tokens.token
-type arg = LexPosition.Position ref * bool ref 
+type arg = LexPosition.Position ref * bool ref
 
 type lexresult = (svalue,LexPosition.Position) token
 fun eof (currPos,_) = Tokens.Eof (!currPos,!currPos)
@@ -15,7 +15,7 @@ fun whitesp yytext currPos duringParsing lex =
 	val nPos =LexPosition.addText cPos yytext
     in
 	(currPos:=nPos;lex (currPos,duringParsing) ())
-    end    
+    end
 
 fun newline yytext currPos duringParsing lex =
     let
@@ -23,9 +23,9 @@ fun newline yytext currPos duringParsing lex =
 	val nPos =LexPosition.newLine cPos
     in
 	(currPos:=nPos;lex (currPos,duringParsing) ())
-    end    
+    end
 
-fun makeToken token yytext currPos duringParsing= 
+fun makeToken token yytext currPos duringParsing=
     let
 	val cPos = !currPos
 	val nPos =LexPosition.addText cPos yytext
@@ -41,7 +41,7 @@ fun makeValToken token value yytext currPos duringParsing=
 	(duringParsing:=true;currPos:=nPos;token (value, cPos, nPos))
     end
 
-fun makeError yytext currPos _= 
+fun makeError yytext currPos _=
     let
 	val cPos = !currPos
 	val nPos =LexPosition.addText cPos yytext
@@ -99,14 +99,14 @@ TypeVar      = ' {Alphanum};
 "exit"        => (makeToken Tokens.Exit yytext currPos duringParsing);
 "show"        => (makeToken Tokens.Show yytext currPos duringParsing);
 "norm"        => (makeToken Tokens.Norm yytext currPos duringParsing);
-{Digit}+      => (makeValToken Tokens.Number 
-		  ((fn SOME a => a | NONE => IntInf.fromInt 0) 
+{Digit}+      => (makeValToken Tokens.Number
+		  ((fn SOME a => a | NONE => IntInf.fromInt 0)
 		   (IntInf.fromString yytext))
 		  yytext currPos duringParsing);
-"()"          => (makeToken Tokens.LRParen yytext currPos duringParsing); 
+"()"          => (makeToken Tokens.LRParen yytext currPos duringParsing);
 "{}"          => (makeToken Tokens.LRBrace yytext currPos duringParsing);
 \"[^"]*\"     => (makeValToken Tokens.Str yytext yytext currPos duringParsing);
-"(*"(((([^*]\))*)|([^\)]*))*)"*)" => 
+"(*"(((([^*]\))*)|([^\)]*))*)"*)" =>
                  (whitesp yytext currPos duringParsing lex);
 {UpperIdent}  => (makeValToken Tokens.UpperIdent yytext yytext
 		  currPos duringParsing);
@@ -116,9 +116,9 @@ TypeVar      = ' {Alphanum};
 		  currPos duringParsing);
 {Iterator}    => (makeValToken Tokens.Iterator yytext yytext
 		  currPos duringParsing);
-{Recursor}    => (makeValToken Tokens.Recursor yytext yytext 
+{Recursor}    => (makeValToken Tokens.Recursor yytext yytext
 		  currPos duringParsing);
-{Coiterator}  => (makeValToken Tokens.Coiterator yytext yytext 
+{Coiterator}  => (makeValToken Tokens.Coiterator yytext yytext
 		  currPos duringParsing);
 {Corecursor}  => (makeValToken Tokens.Corecursor yytext yytext
 		  currPos duringParsing);
