@@ -1,11 +1,13 @@
 _et-language_
 =============
 
-Source code of two interpreters for the ET language, also known as IPL:
+Source code of three interpreters for the ET language, also known as IPL:
 
 1. The original SML implementation, by Tomasz Wierzbicki, dated 19 November 1993
 
-2. An OCaml implementation, by [Michał Moskal](http://moskal.me/), dated 5 November 2004
+2. An SML implementation, by Marek Łach, dated 6 November 1998
+
+3. An OCaml implementation, by [Michał Moskal](http://moskal.me/), dated 5 November 2004
 
 Includes all available literature.
 
