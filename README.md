@@ -25,6 +25,7 @@ Includes all available literature.
 * 1998, M. Łach, [“Teoria typów z definicjami indukcyjnymi jako język programowania”](doc/pdf/1998-lach-teoria-typow-z-definicjami-indukcyjnymi-jako-jezyk-programowania.pdf)
 * 1998, Z. Spławski, “Continuations in λ→ with positive (co-)inductive data types”
 * 1999, Z. Spławski, “Interdefinability of positive coinductive types with corecursors”
+* 1999, P. Urzyczyn, [“The Curry-Howard isomorphism: Remarks on recursive types”](doc/pdf/1999-urzyczyn-the-curry-howard-isomorphism-remarks-on-recursive-types.pdf)
 * 1999, Z. Spławski, P. Urzyczyn, [“Type fixpoints: iteration vs. recursion”](doc/pdf/1999-splawski-urzyczyn-type-fixpoints-iteration-vs-recursion.pdf)
 * 2002, Z. Spławski, [“Defining recursors by solving equations in second-order lambda calculus”](doc/pdf/2002-splawski-defining-recursors-by-solving-equations-in-second-order-lambda-calculus.pdf)
 
