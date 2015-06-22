@@ -18,7 +18,7 @@ Includes all available literature.
 * 1991, Z. Spławski, “Proof-theoretic approach to automatic synthesis of polymorphic programs”
 * 1993, Z. Spławski, [“IPL by examples”](doc/pdf/1993-splawski-ipl-by-examples.pdf)
 * 1993, T. Wierzbicki, [“On the implementation of IPL”](doc/pdf/1993-wierzbicki-on-the-implementation-of-ipl.pdf)
-* 1993, Z. Spławski, “Proof-theoretic approach to inductive definitions in ML-like programming languages vs. second-order lambda calculus”
+* 1993, Z. Spławski, “Proof-theoretic approach to inductive definitions in ML-like programming language vs. second-order lambda calculus”
 * 1995, Z. Spławski, “Proving equalities in λ→ with positive (co-)inductive data types”
 * 1996, Z. Spławski, “Subtyping λ→ with positive (co-)inductive data types”
 * 1997, Z. Spławski, “Proving equalities in second-order lambda calculus with inductive and recursive types”
