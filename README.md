@@ -32,8 +32,9 @@ Includes all available literature.
 
 ### Related work
 
+* [_Total_ functional programming](https://github.com/mietek/total-functional-programming)
+* [_Totally_ functional programming](https://github.com/mietek/totally-functional-programming)
 * [The Charity language](https://github.com/mietek/charity-language)
-* [Total functional programming](https://github.com/mietek/total-functional-programming)
 
 
 About
